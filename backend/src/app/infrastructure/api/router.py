@@ -8,6 +8,7 @@ from app.modules.pantry.api.routes import router as pantry_router
 from app.modules.costs.api.routes import router as costs_router
 from app.modules.recipes.api.routes import router as recipes_router
 from app.modules.shopping.api.routes import router as shopping_router
+from app.modules.assistant.api.routes import router as assistant_router
 
 api_router = APIRouter()
 
@@ -16,6 +17,7 @@ api_router.include_router(pantry_router, prefix="/pantry", tags=["pantry"])
 api_router.include_router(recipes_router, prefix="/recipes", tags=["recipes"])
 api_router.include_router(costs_router, prefix="/costs", tags=["costs"])
 api_router.include_router(shopping_router, prefix="/shopping", tags=["shopping"])
+api_router.include_router(assistant_router, prefix="/assistant", tags=["assistant"])
 
 
 @api_router.get("/db-health", tags=["meta"])

@@ -14,6 +14,7 @@ dependencies = [
     "python-jose[cryptography]>=3.3",  # JWT (Step 5)
     "passlib[bcrypt]>=1.7",   # password hashing (Step 5)
     "pgvector>=0.3",          # embeddings (Step 9)
+    "anthropic>=0.40",        # Leftover Chef AI — Claude provider (Step 9)
     "structlog>=24.4",        # structured logging
     "email-validator>=2.0",   # required by pydantic EmailStr
 ]

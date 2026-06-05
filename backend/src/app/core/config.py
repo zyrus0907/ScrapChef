@@ -30,6 +30,7 @@ class Settings(BaseSettings):
 
     LLM_PROVIDER: str = "claude"
     LLM_API_KEY: str = ""
+    LLM_MODEL: str = "claude-opus-4-8"
 
     @computed_field
     @property
