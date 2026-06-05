@@ -16,3 +16,7 @@ from app.modules.recipes.infrastructure.models import (  # noqa: F401
     RecipeIngredientModel,
     RecipeModel,
 )
+from app.modules.shopping.infrastructure.models import (  # noqa: F401
+    ShoppingListItemModel,
+    ShoppingListModel,
+)
