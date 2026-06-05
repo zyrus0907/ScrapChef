@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from uuid import UUID
 
+from app.modules.identity.domain.household import Household
 from app.modules.identity.domain.user import Email, User
 
 
@@ -42,3 +43,11 @@ class AbstractTokenRepository(ABC):
 
     @abstractmethod
     async def revoke_family(self, family_id: UUID) -> None: ...
+
+
+class AbstractHouseholdRepository(ABC):
+    @abstractmethod
+    async def save(self, household: Household) -> None: ...
+
+    @abstractmethod
+    async def get_by_owner(self, owner_id: UUID) -> Household | None: ...

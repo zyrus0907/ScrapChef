@@ -10,7 +10,12 @@ from app.core.security import (
     hash_token,
 )
 from app.modules.identity.application.dtos import AuthResult, RegisterCommand, TokenPair
-from app.modules.identity.application.ports import AbstractTokenRepository, AbstractUserRepository
+from app.modules.identity.application.ports import (
+    AbstractHouseholdRepository,
+    AbstractTokenRepository,
+    AbstractUserRepository,
+)
+from app.modules.identity.domain.household import Household
 from app.modules.identity.domain.user import Email, User
 
 settings = get_settings()
@@ -18,10 +23,14 @@ settings = get_settings()
 
 class RegisterUser:
     def __init__(
-        self, users: AbstractUserRepository, tokens: AbstractTokenRepository
+        self,
+        users: AbstractUserRepository,
+        tokens: AbstractTokenRepository,
+        households: AbstractHouseholdRepository,
     ) -> None:
         self._users = users
         self._tokens = tokens
+        self._households = households
 
     async def execute(self, cmd: RegisterCommand) -> AuthResult:
         email = Email(cmd.email.lower().strip())
@@ -35,6 +44,11 @@ class RegisterUser:
             display_name=cmd.display_name.strip(),
         )
         await self._users.save(user)
+
+        # Auto-create a personal household so the user can start adding items immediately
+        await self._households.save(
+            Household(name=f"{cmd.display_name.strip()}'s Household", owner_id=user.id)
+        )
 
         refresh_token = generate_refresh_token()
         await self._tokens.store(

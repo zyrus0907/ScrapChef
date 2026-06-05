@@ -17,6 +17,7 @@ from app.modules.identity.application.use_cases.logout import LogoutUser
 from app.modules.identity.application.use_cases.refresh_token import RefreshAccessToken
 from app.modules.identity.application.use_cases.register import RegisterUser
 from app.modules.identity.infrastructure.models import UserModel
+from app.modules.identity.infrastructure.household_repository import SqlHouseholdRepository
 from app.modules.identity.infrastructure.token_repository import SqlTokenRepository
 from app.modules.identity.infrastructure.user_repository import SqlUserRepository
 
@@ -29,7 +30,9 @@ async def register(
     session: AsyncSession = Depends(get_db_session),
 ) -> TokenResponse:
     result = await RegisterUser(
-        SqlUserRepository(session), SqlTokenRepository(session)
+        SqlUserRepository(session),
+        SqlTokenRepository(session),
+        SqlHouseholdRepository(session),
     ).execute(
         RegisterCommand(
             email=body.email,
