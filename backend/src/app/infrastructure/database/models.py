@@ -1,10 +1,14 @@
 """Central import point for all ORM models.
 
 Alembic imports this so Base.metadata is fully populated for autogenerate.
-As each module adds models, import them here.
+Add every new module's models here.
 """
 
 from app.infrastructure.database.base import Base  # noqa: F401
-
-# Added in later steps, e.g.:
-# from app.modules.identity.infrastructure.models import UserModel  # noqa: F401
+from app.modules.identity.infrastructure.models import (  # noqa: F401
+    HouseholdMemberModel,
+    HouseholdModel,
+    RefreshTokenModel,
+    UserModel,
+)
+from app.modules.pantry.infrastructure.models import PantryItemModel  # noqa: F401
