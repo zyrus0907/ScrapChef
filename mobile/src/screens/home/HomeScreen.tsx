@@ -1,0 +1,233 @@
+import React, { useEffect } from 'react';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { usePantryStore } from '../../store/pantry.store';
+import { useAuthStore } from '../../store/auth.store';
+import { PantryItemCard } from '../../components/PantryItemCard';
+import { Card } from '../../components/ui/Card';
+import { Colors, Spacing, Typography } from '../../theme';
+
+const GREETING = () => {
+  const h = new Date().getHours();
+  if (h < 12) return 'Good morning';
+  if (h < 17) return 'Good afternoon';
+  return 'Good evening';
+};
+
+export const HomeScreen = ({ navigation }: any) => {
+  const { user } = useAuthStore();
+  const { items, expiringSoon, fetchItems, fetchExpiringSoon } = usePantryStore();
+
+  useEffect(() => {
+    fetchItems();
+    fetchExpiringSoon(5);
+  }, []);
+
+  const activeItems = items.filter((i) => i.status === 'active');
+  const expiredItems = activeItems.filter((i) => i.is_expired);
+
+  return (
+    <View style={styles.container}>
+      <LinearGradient
+        colors={['#1A1400', Colors.background]}
+        style={styles.headerGradient}
+      />
+
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={styles.header}>
+          <Text style={styles.greeting}>{GREETING()},</Text>
+          <Text style={styles.userName}>{user?.display_name ?? 'Chef'}</Text>
+          <Text style={styles.date}>
+            {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+          </Text>
+        </View>
+
+        <View style={styles.statsRow}>
+          <StatCard label="In Pantry" value={activeItems.length} />
+          <StatCard label="Expiring" value={expiringSoon.length} accent={Colors.warning} />
+          <StatCard label="Expired" value={expiredItems.length} accent={Colors.danger} />
+        </View>
+
+        {expiringSoon.length > 0 ? (
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>Use Soon</Text>
+              <View style={styles.urgentPill}>
+                <Text style={styles.urgentPillText}>{expiringSoon.length} items</Text>
+              </View>
+            </View>
+            <Text style={styles.sectionSub}>These items expire within 5 days</Text>
+            {expiringSoon.slice(0, 3).map((item) => (
+              <PantryItemCard
+                key={item.id}
+                item={item}
+                onPress={() => navigation.navigate('Pantry')}
+              />
+            ))}
+          </View>
+        ) : null}
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Quick Actions</Text>
+          <View style={styles.actionsGrid}>
+            <QuickAction
+              icon="+"
+              label="Add Item"
+              onPress={() => navigation.navigate('Pantry', { screen: 'AddItem' })}
+            />
+            <QuickAction
+              icon="✦"
+              label="Recipes"
+              onPress={() => navigation.navigate('Recipes')}
+            />
+            <QuickAction
+              icon="◎"
+              label="Analytics"
+              onPress={() => navigation.navigate('Costs')}
+            />
+          </View>
+        </View>
+
+        <View style={styles.bottomPad} />
+      </ScrollView>
+    </View>
+  );
+};
+
+const StatCard = ({
+  label,
+  value,
+  accent = Colors.gold,
+}: {
+  label: string;
+  value: number;
+  accent?: string;
+}) => (
+  <Card style={styles.statCard}>
+    <Text style={[styles.statValue, { color: accent }]}>{value}</Text>
+    <Text style={styles.statLabel}>{label}</Text>
+  </Card>
+);
+
+const QuickAction = ({
+  icon,
+  label,
+  onPress,
+}: {
+  icon: string;
+  label: string;
+  onPress: () => void;
+}) => (
+  <Card onPress={onPress} style={styles.quickAction} gold>
+    <Text style={styles.quickIcon}>{icon}</Text>
+    <Text style={styles.quickLabel}>{label}</Text>
+  </Card>
+);
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: Colors.background },
+  headerGradient: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 200,
+  },
+  header: {
+    paddingTop: Spacing.xl,
+    paddingHorizontal: Spacing.xl,
+    paddingBottom: Spacing.lg,
+  },
+  greeting: {
+    ...Typography.bodyLarge,
+    color: Colors.textSecondary,
+  },
+  userName: {
+    ...Typography.displayMedium,
+    color: Colors.textPrimary,
+    marginBottom: 4,
+  },
+  date: {
+    ...Typography.labelSmall,
+    color: Colors.textMuted,
+    letterSpacing: 1,
+  },
+  statsRow: {
+    flexDirection: 'row',
+    paddingHorizontal: Spacing.xl,
+    gap: Spacing.sm,
+    marginBottom: Spacing.lg,
+  },
+  statCard: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: Spacing.md,
+    gap: 4,
+  },
+  statValue: {
+    fontSize: 28,
+    fontWeight: '200',
+    fontFamily: 'serif',
+    color: Colors.gold,
+  },
+  statLabel: {
+    ...Typography.caption,
+    color: Colors.textMuted,
+    letterSpacing: 1.5,
+    textTransform: 'uppercase',
+  },
+  section: {
+    paddingHorizontal: Spacing.xl,
+    marginBottom: Spacing.lg,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    marginBottom: 4,
+  },
+  sectionTitle: {
+    ...Typography.titleLarge,
+    color: Colors.textPrimary,
+  },
+  urgentPill: {
+    backgroundColor: Colors.warningDim,
+    borderWidth: 1,
+    borderColor: Colors.warning,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 999,
+  },
+  urgentPillText: {
+    ...Typography.caption,
+    color: Colors.warning,
+    letterSpacing: 0.5,
+  },
+  sectionSub: {
+    ...Typography.bodySmall,
+    color: Colors.textMuted,
+    marginBottom: Spacing.md,
+  },
+  actionsGrid: {
+    flexDirection: 'row',
+    gap: Spacing.sm,
+    marginTop: Spacing.sm,
+  },
+  quickAction: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: Spacing.lg,
+    gap: Spacing.sm,
+  },
+  quickIcon: {
+    fontSize: 22,
+    color: Colors.gold,
+  },
+  quickLabel: {
+    ...Typography.labelSmall,
+    color: Colors.textSecondary,
+    letterSpacing: 1,
+    textTransform: 'uppercase',
+  },
+  bottomPad: { height: Spacing.xxl },
+});
