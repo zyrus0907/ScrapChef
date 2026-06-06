@@ -77,8 +77,13 @@ export const HomeScreen = ({ navigation }: any) => {
             />
             <QuickAction
               icon="✦"
-              label="Recipes"
-              onPress={() => navigation.navigate('Recipes')}
+              label="Leftover Chef"
+              onPress={() => navigation.navigate('LeftoverChef')}
+            />
+            <QuickAction
+              icon="◰"
+              label="Shopping"
+              onPress={() => navigation.navigate('Shopping')}
             />
             <QuickAction
               icon="◎"
@@ -210,11 +215,13 @@ const styles = StyleSheet.create({
   },
   actionsGrid: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: Spacing.sm,
     marginTop: Spacing.sm,
   },
   quickAction: {
-    flex: 1,
+    flexBasis: '47%',
+    flexGrow: 1,
     alignItems: 'center',
     paddingVertical: Spacing.lg,
     gap: Spacing.sm,

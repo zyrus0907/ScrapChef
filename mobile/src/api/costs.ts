@@ -1,22 +1,22 @@
 import client from './client';
 
 export interface CostSummary {
-  total_purchased: number;
-  total_consumed_value: number;
-  total_wasted_value: number;
-  savings_rate: number;
-  waste_rate: number;
+  month: string; // "YYYY-MM"
+  total_saved: number;
+  total_wasted: number;
   items_consumed: number;
   items_wasted: number;
+  waste_rate: number;
+  net_savings: number;
 }
 
 export interface MonthlySnapshot {
-  year: number;
-  month: number;
-  total_purchased: number;
-  consumed_value: number;
-  wasted_value: number;
-  savings_rate: number;
+  month: string; // "YYYY-MM"
+  total_saved: number;
+  total_wasted: number;
+  items_consumed: number;
+  items_wasted: number;
+  net_savings: number;
 }
 
 export const costsApi = {

@@ -5,8 +5,16 @@ export const formatDate = (dateString: string): string => {
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 };
 
-export const formatCurrency = (amount: number): string => {
-  return `$${amount.toFixed(2)}`;
+// Decimal fields arrive from the API as strings; coerce defensively.
+export const formatCurrency = (amount: number | string): string => {
+  const n = typeof amount === 'string' ? parseFloat(amount) : amount;
+  return `$${(Number.isFinite(n) ? n : 0).toFixed(2)}`;
+};
+
+export const toNumber = (value: number | string | undefined | null): number => {
+  if (value === undefined || value === null) return 0;
+  const n = typeof value === 'string' ? parseFloat(value) : value;
+  return Number.isFinite(n) ? n : 0;
 };
 
 export const formatPercent = (value: number): string => {

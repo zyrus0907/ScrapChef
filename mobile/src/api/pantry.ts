@@ -38,8 +38,8 @@ export const pantryApi = {
   update: (id: string, data: Partial<AddItemPayload>) =>
     client.patch<PantryItem>(`/pantry/items/${id}`, data),
   delete: (id: string) => client.delete(`/pantry/items/${id}`),
-  expiringSoon: (days = 7) =>
-    client.get<PantryItem[]>(`/pantry/items/expiring-soon?days=${days}`),
+  expiringSoon: (withinDays = 7) =>
+    client.get<PantryItem[]>(`/pantry/items/expiring-soon?within_days=${withinDays}`),
   consume: (id: string, quantity?: number) =>
     client.post<PantryItem>(`/pantry/items/${id}/consume`, quantity ? { quantity } : {}),
   waste: (id: string, quantity?: number) =>
