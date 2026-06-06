@@ -1,54 +1,103 @@
 import React, { useRef, useState } from 'react';
 import { ActivityIndicator, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
+import * as ImagePicker from 'expo-image-picker';
 import { lookupBarcode } from '../../api/barcode';
+import { decodeBarcodeFromUri } from '../../utils/decodeBarcode';
 import { Button } from '../../components/ui/Button';
+import { Input } from '../../components/ui/Input';
 import { Colors, Radius, Spacing, Typography } from '../../theme';
 
 export const ScanScreen = ({ navigation }: any) => {
   const [permission, requestPermission] = useCameraPermissions();
   const [looking, setLooking] = useState(false);
+  const [manual, setManual] = useState('');
+  const [note, setNote] = useState<string | null>(null);
   const lockRef = useRef(false);
 
-  const goToAdd = (prefill: any) => navigation.replace('AddItem', { prefill });
-
-  const onScanned = async ({ data }: { data: string }) => {
-    if (lockRef.current) return;
-    lockRef.current = true;
+  // Shared: given a barcode string, look it up and open a prefilled Add Item.
+  const submitBarcode = async (code: string) => {
+    const trimmed = code.trim();
+    if (!trimmed) return;
     setLooking(true);
-    const product = await lookupBarcode(data);
+    const product = await lookupBarcode(trimmed);
     setLooking(false);
-    goToAdd({
-      barcode: data,
-      name: product?.name ?? '',
-      category: product?.category,
-      imageUrl: product?.imageUrl,
-      brand: product?.brand,
+    navigation.replace('AddItem', {
+      prefill: {
+        barcode: trimmed,
+        name: product?.name ?? '',
+        category: product?.category,
+        imageUrl: product?.imageUrl,
+        brand: product?.brand,
+      },
     });
   };
 
-  // Barcode scanning needs a native camera — not reliable on web.
-  if (Platform.OS === 'web') {
+  const onCameraScanned = ({ data }: { data: string }) => {
+    if (lockRef.current) return;
+    lockRef.current = true;
+    submitBarcode(data);
+  };
+
+  const pickAndDecode = async () => {
+    setNote(null);
+    const res = await ImagePicker.launchImageLibraryAsync({ quality: 1 });
+    if (res.canceled || !res.assets?.length) return;
+    setLooking(true);
+    const code = await decodeBarcodeFromUri(res.assets[0].uri);
+    setLooking(false);
+    if (code) {
+      submitBarcode(code);
+    } else {
+      setNote("Couldn't read a barcode in that image. Try a clearer photo, or type the number below.");
+    }
+  };
+
+  // ---- Web (and any no-camera platform): upload a photo or type the number ----
+  if (Platform.OS === 'web' || !permission) {
+    const cameraUnsupported = Platform.OS === 'web';
+    if (!cameraUnsupported && !permission) {
+      return (
+        <View style={styles.centered}>
+          <ActivityIndicator color={Colors.gold} />
+        </View>
+      );
+    }
     return (
-      <View style={styles.centered}>
-        <Text style={styles.bigEmoji}>📷</Text>
-        <Text style={styles.title}>Scan on your phone</Text>
+      <View style={styles.webWrap}>
+        <Text style={styles.bigEmoji}>🏷️</Text>
+        <Text style={styles.title}>Add by barcode</Text>
         <Text style={styles.message}>
-          Barcode scanning uses the camera and works in the mobile app. You can still add items by hand.
+          Upload a photo of the barcode and we'll read it, or just type the number printed under it.
         </Text>
-        <Button label="Add Manually" onPress={() => navigation.replace('AddItem')} />
+
+        <Button label={looking ? 'Working…' : 'Upload barcode photo'} onPress={pickAndDecode} loading={looking} />
+
+        <View style={styles.orRow}>
+          <View style={styles.line} />
+          <Text style={styles.orText}>OR</Text>
+          <View style={styles.line} />
+        </View>
+
+        <Input
+          label="Barcode number"
+          value={manual}
+          onChangeText={setManual}
+          keyboardType="number-pad"
+          placeholder="e.g. 3017620422003"
+        />
+        <Button label="Look up product" variant="outline" onPress={() => submitBarcode(manual)} />
+
+        {note ? <Text style={styles.note}>{note}</Text> : null}
+
+        <Pressable onPress={() => navigation.replace('AddItem')} style={styles.linkBtn}>
+          <Text style={styles.link}>Add manually instead</Text>
+        </Pressable>
       </View>
     );
   }
 
-  if (!permission) {
-    return (
-      <View style={styles.centered}>
-        <ActivityIndicator color={Colors.gold} />
-      </View>
-    );
-  }
-
+  // ---- Native: live camera scanning ----
   if (!permission.granted) {
     return (
       <View style={styles.centered}>
@@ -70,26 +119,19 @@ export const ScanScreen = ({ navigation }: any) => {
       <CameraView
         style={StyleSheet.absoluteFill}
         facing="back"
-        barcodeScannerSettings={{
-          barcodeTypes: ['ean13', 'ean8', 'upc_a', 'upc_e', 'code128'],
-        }}
-        onBarcodeScanned={looking ? undefined : onScanned}
+        barcodeScannerSettings={{ barcodeTypes: ['ean13', 'ean8', 'upc_a', 'upc_e', 'code128'] }}
+        onBarcodeScanned={looking ? undefined : onCameraScanned}
       />
-
       <View style={styles.overlay} pointerEvents="none">
         <View style={styles.frame} />
-        <Text style={styles.hint}>
-          {looking ? 'Looking up product…' : 'Point at a barcode'}
-        </Text>
+        <Text style={styles.hint}>{looking ? 'Looking up product…' : 'Point at a barcode'}</Text>
       </View>
-
       {looking ? (
         <View style={styles.lookingBar}>
           <ActivityIndicator color={Colors.onPrimary} />
           <Text style={styles.lookingText}>Finding product…</Text>
         </View>
       ) : null}
-
       <Pressable onPress={() => navigation.replace('AddItem')} style={styles.manualBtn}>
         <Text style={styles.manualText}>Enter manually</Text>
       </Pressable>
@@ -107,9 +149,24 @@ const styles = StyleSheet.create({
     padding: Spacing.xl,
     gap: Spacing.md,
   },
-  bigEmoji: { fontSize: 48 },
-  title: { ...Typography.displaySmall, color: Colors.textPrimary },
-  message: { ...Typography.bodyMedium, color: Colors.textSecondary, textAlign: 'center', marginBottom: Spacing.md },
+  webWrap: {
+    flex: 1,
+    backgroundColor: Colors.background,
+    padding: Spacing.xl,
+    justifyContent: 'center',
+  },
+  bigEmoji: { fontSize: 48, textAlign: 'center' },
+  title: { ...Typography.displaySmall, color: Colors.textPrimary, textAlign: 'center' },
+  message: {
+    ...Typography.bodyMedium,
+    color: Colors.textSecondary,
+    textAlign: 'center',
+    marginBottom: Spacing.lg,
+  },
+  orRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md, marginVertical: Spacing.lg },
+  line: { flex: 1, height: 1, backgroundColor: Colors.border },
+  orText: { ...Typography.labelSmall, color: Colors.textMuted },
+  note: { ...Typography.bodySmall, color: Colors.warning, marginTop: Spacing.md, textAlign: 'center' },
   overlay: {
     position: 'absolute',
     top: 0,
@@ -120,14 +177,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: Spacing.lg,
   },
-  frame: {
-    width: 260,
-    height: 170,
-    borderRadius: Radius.lg,
-    borderWidth: 3,
-    borderColor: Colors.onPrimary,
-    backgroundColor: 'transparent',
-  },
+  frame: { width: 260, height: 170, borderRadius: Radius.lg, borderWidth: 3, borderColor: Colors.onPrimary },
   hint: {
     ...Typography.labelLarge,
     color: Colors.onPrimary,
@@ -160,6 +210,6 @@ const styles = StyleSheet.create({
     borderRadius: Radius.full,
   },
   manualText: { ...Typography.labelLarge, color: Colors.textPrimary },
-  linkBtn: { paddingVertical: Spacing.sm },
+  linkBtn: { paddingVertical: Spacing.md, alignItems: 'center' },
   link: { ...Typography.bodyMedium, color: Colors.gold },
 });

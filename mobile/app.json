@@ -27,6 +27,12 @@
         {
           "cameraPermission": "Allow ScrapChef to use the camera to scan grocery barcodes."
         }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow ScrapChef to pick a photo of a barcode or receipt."
+        }
       ]
     ]
   }
