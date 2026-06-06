@@ -2,9 +2,13 @@ import axios, { AxiosInstance } from 'axios';
 import { Platform } from 'react-native';
 import { getTokens, setTokens, clearTokens } from '../utils/storage';
 
-// web → localhost, Android emulator → 10.0.2.2, iOS sim → localhost
+// Override with EXPO_PUBLIC_API_URL (e.g. http://192.168.0.104:8000/api/v1) —
+// required when running on a physical phone via Expo Go, where localhost and
+// 10.0.2.2 don't reach your dev machine. Otherwise use platform defaults:
+// web/iOS sim → localhost, Android emulator → 10.0.2.2.
 const getBaseUrl = () => {
-  if (Platform.OS === 'web') return 'http://localhost:8000/api/v1';
+  const override = process.env.EXPO_PUBLIC_API_URL;
+  if (override) return override;
   if (Platform.OS === 'android') return 'http://10.0.2.2:8000/api/v1';
   return 'http://localhost:8000/api/v1';
 };

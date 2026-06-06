@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import get_settings
 from app.core.logging import configure_logging, get_logger
@@ -33,6 +34,16 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
         docs_url="/docs",
         openapi_url=f"{settings.API_V1_PREFIX}/openapi.json",
+    )
+
+    # CORS — the mobile web build calls the API cross-origin; bearer tokens
+    # (not cookies) mean wildcard origins are safe. Tighten for production.
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=settings.CORS_ORIGINS,
+        allow_credentials=False,
+        allow_methods=["*"],
+        allow_headers=["*"],
     )
 
     register_exception_handlers(app)

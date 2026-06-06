@@ -13,6 +13,8 @@ class Settings(BaseSettings):
     ENVIRONMENT: str = "local"
     DEBUG: bool = True
     API_V1_PREFIX: str = "/api/v1"
+    # Allowed CORS origins. "*" is fine for dev (bearer-token auth, no cookies).
+    CORS_ORIGINS: list[str] = ["*"]
 
     # Full async URL for a hosted DB (Neon, Supabase, RDS). If empty, built from parts.
     DATABASE_URL_OVERRIDE: str = ""

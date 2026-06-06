@@ -2,6 +2,23 @@ import { create } from 'zustand';
 import { authApi, UserProfile } from '../api/auth';
 import { clearTokens, getTokens, setTokens } from '../utils/storage';
 
+// Pull a human-readable message out of an axios error. Handles: no network
+// (request never reached the server), our DomainError shape ({error:{message}}),
+// and FastAPI validation errors ({detail: string | [{msg}]}).
+const errorMessage = (e: any, fallback: string): string => {
+  if (e?.response) {
+    const data = e.response.data;
+    if (typeof data?.error?.message === 'string') return data.error.message;
+    if (typeof data?.detail === 'string') return data.detail;
+    if (Array.isArray(data?.detail) && data.detail[0]?.msg) {
+      return String(data.detail[0].msg).replace(/^Value error,\s*/, '');
+    }
+    return fallback;
+  }
+  // No response object → the request never completed (server unreachable).
+  return "Can't reach the server. Make sure the backend is running and the app is pointed at the right address.";
+};
+
 interface AuthState {
   user: UserProfile | null;
   isAuthenticated: boolean;
@@ -28,8 +45,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       const { data: user } = await authApi.me();
       set({ user, isAuthenticated: true, isLoading: false });
     } catch (e: any) {
-      const msg = e.response?.data?.detail ?? 'Login failed. Please check your credentials.';
-      set({ error: typeof msg === 'string' ? msg : 'Login failed.', isLoading: false });
+      set({ error: errorMessage(e, 'Login failed. Please check your credentials.'), isLoading: false });
     }
   },
 
@@ -41,8 +57,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       const { data: user } = await authApi.me();
       set({ user, isAuthenticated: true, isLoading: false });
     } catch (e: any) {
-      const msg = e.response?.data?.detail ?? 'Registration failed.';
-      set({ error: typeof msg === 'string' ? msg : 'Registration failed.', isLoading: false });
+      set({ error: errorMessage(e, 'Registration failed.'), isLoading: false });
     }
   },
 
