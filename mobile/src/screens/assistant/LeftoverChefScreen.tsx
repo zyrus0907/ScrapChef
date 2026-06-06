@@ -5,6 +5,7 @@ import { assistantApi, GeneratedRecipe } from '../../api/assistant';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { EmptyState } from '../../components/ui/EmptyState';
+import { FoodImage } from '../../components/FoodImage';
 import { Colors, Radius, Spacing, Typography } from '../../theme';
 
 export const LeftoverChefScreen = () => {
@@ -65,12 +66,15 @@ export const LeftoverChefScreen = () => {
       {recipes.map((r, idx) => (
         <Card key={`${r.name}-${idx}`} style={styles.recipeCard} gold={r.uses_expiring_items}>
           <View style={styles.recipeHeader}>
-            <Text style={styles.recipeName}>{r.name}</Text>
-            {r.uses_expiring_items ? (
-              <View style={styles.badge}>
-                <Text style={styles.badgeText}>USES EXPIRING</Text>
-              </View>
-            ) : null}
+            <FoodImage name={r.name} size={56} radius={Radius.md} />
+            <View style={{ flex: 1 }}>
+              <Text style={styles.recipeName}>{r.name}</Text>
+              {r.uses_expiring_items ? (
+                <View style={styles.badge}>
+                  <Text style={styles.badgeText}>USES EXPIRING</Text>
+                </View>
+              ) : null}
+            </View>
           </View>
           <Text style={styles.recipeDesc}>{r.description}</Text>
           <Text style={styles.meta}>~{r.estimated_time_minutes} min</Text>
@@ -126,9 +130,9 @@ const styles = StyleSheet.create({
   providerNote: { ...Typography.bodySmall, color: Colors.textMuted, marginTop: Spacing.sm, textAlign: 'center' },
   error: { ...Typography.bodyMedium, color: Colors.danger, marginTop: Spacing.md, textAlign: 'center' },
   recipeCard: { marginBottom: Spacing.md },
-  recipeHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: Spacing.sm },
-  recipeName: { ...Typography.titleLarge, color: Colors.textPrimary, flex: 1 },
-  badge: { backgroundColor: Colors.warningDim, borderRadius: Radius.full, paddingHorizontal: Spacing.sm, paddingVertical: 2 },
+  recipeHeader: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md },
+  recipeName: { ...Typography.titleLarge, color: Colors.textPrimary },
+  badge: { alignSelf: 'flex-start', marginTop: 4, backgroundColor: Colors.warningDim, borderRadius: Radius.full, paddingHorizontal: Spacing.sm, paddingVertical: 2 },
   badgeText: { ...Typography.caption, color: Colors.warning, letterSpacing: 1 },
   recipeDesc: { ...Typography.bodyMedium, color: Colors.textSecondary, marginTop: Spacing.xs },
   meta: { ...Typography.labelSmall, color: Colors.gold, marginTop: Spacing.sm },

@@ -45,6 +45,7 @@ async def add_item(
             unit=body.unit,
             category=body.category,
             barcode=body.barcode,
+            image_url=body.image_url,
             expiry_date=body.expiry_date,
             purchase_price=body.purchase_price,
             purchase_date=body.purchase_date,

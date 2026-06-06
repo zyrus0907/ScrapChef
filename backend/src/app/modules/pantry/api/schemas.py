@@ -12,6 +12,7 @@ class AddItemRequest(BaseModel):
     unit: str = Field(min_length=1, max_length=30, strip_whitespace=True)
     category: str = Field(default="uncategorised", max_length=60)
     barcode: Optional[str] = Field(None, max_length=50)
+    image_url: Optional[str] = Field(None, max_length=500)
     expiry_date: Optional[date] = None
     purchase_price: Optional[Decimal] = Field(None, ge=0)
     purchase_date: Optional[date] = None
@@ -36,6 +37,7 @@ class PantryItemResponse(BaseModel):
     category: str
     status: str
     barcode: Optional[str]
+    image_url: Optional[str]
     expiry_date: Optional[date]
     opened_date: Optional[date]
     purchase_price: Optional[Decimal]
@@ -57,6 +59,7 @@ class PantryItemResponse(BaseModel):
             category=item.category,
             status=item.status.value,
             barcode=item.barcode,
+            image_url=item.image_url,
             expiry_date=item.expiry_date,
             opened_date=item.opened_date,
             purchase_price=item.purchase_price,

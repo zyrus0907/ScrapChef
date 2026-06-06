@@ -24,6 +24,7 @@ class PantryItem(Entity):
     category: str = "uncategorised"
     status: PantryItemStatus = PantryItemStatus.ACTIVE
     barcode: Optional[str] = None
+    image_url: Optional[str] = None
     expiry_date: Optional[date] = None
     opened_date: Optional[date] = None
     # Cost tracking fields (Phase 1 requirement)

@@ -35,6 +35,7 @@ class PantryItemModel(UUIDPrimaryKeyMixin, TimestampMixin, Base):
 
     # Identification
     barcode: Mapped[Optional[str]] = mapped_column(String(50), nullable=True, index=True)
+    image_url: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
 
     # Expiry tracking
     expiry_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True, index=True)

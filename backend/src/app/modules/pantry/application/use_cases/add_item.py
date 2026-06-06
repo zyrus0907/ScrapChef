@@ -16,6 +16,7 @@ class AddPantryItem:
             unit=cmd.unit,
             category=cmd.category,
             barcode=cmd.barcode,
+            image_url=cmd.image_url,
             expiry_date=cmd.expiry_date,
             purchase_price=cmd.purchase_price,
             purchase_date=cmd.purchase_date,

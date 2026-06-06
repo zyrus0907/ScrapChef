@@ -20,6 +20,14 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow ScrapChef to use the camera to scan grocery barcodes."
+        }
+      ]
+    ]
   }
 }

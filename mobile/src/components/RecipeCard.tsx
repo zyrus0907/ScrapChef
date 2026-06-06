@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { RecipeMatch } from '../api/recipes';
 import { Card } from './ui/Card';
+import { FoodImage } from './FoodImage';
 import { Colors, Radius, Spacing, Typography } from '../theme';
 
 interface RecipeCardProps {
@@ -23,6 +24,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ match, onPress }) => {
   return (
     <Card onPress={onPress} style={styles.card} gold={pct === 100}>
       <View style={styles.header}>
+        <FoodImage name={recipe.name} category={recipe.cuisine} size={52} radius={Radius.md} style={styles.thumb} />
         <View style={styles.titleRow}>
           <Text style={styles.name} numberOfLines={2}>{recipe.name}</Text>
           {hasExpiryBoost ? (
@@ -81,6 +83,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     marginBottom: Spacing.sm,
+  },
+  thumb: {
+    marginRight: Spacing.md,
   },
   titleRow: {
     flex: 1,

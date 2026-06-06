@@ -7,6 +7,8 @@ export interface PantryItem {
   unit: string;
   category: string;
   status: 'active' | 'consumed' | 'wasted';
+  barcode?: string;
+  image_url?: string;
   expiry_date?: string;
   opened_date?: string;
   purchase_price?: number;
@@ -25,6 +27,7 @@ export interface AddItemPayload {
   unit: string;
   category?: string;
   barcode?: string;
+  image_url?: string;
   expiry_date?: string;
   purchase_price?: number;
   purchase_date?: string;

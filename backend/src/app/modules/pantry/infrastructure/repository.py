@@ -62,6 +62,7 @@ class SqlPantryRepository(AbstractPantryRepository):
                     category=item.category,
                     status=item.status.value,
                     barcode=item.barcode,
+                    image_url=item.image_url,
                     expiry_date=item.expiry_date,
                     opened_date=item.opened_date,
                     purchase_price=item.purchase_price,
@@ -79,6 +80,7 @@ class SqlPantryRepository(AbstractPantryRepository):
             model.category = item.category
             model.status = item.status.value
             model.barcode = item.barcode
+            model.image_url = item.image_url
             model.expiry_date = item.expiry_date
             model.opened_date = item.opened_date
             model.purchase_price = item.purchase_price
@@ -104,6 +106,7 @@ class SqlPantryRepository(AbstractPantryRepository):
             category=model.category,
             status=PantryItemStatus(model.status),
             barcode=model.barcode,
+            image_url=model.image_url,
             expiry_date=model.expiry_date,
             opened_date=model.opened_date,
             purchase_price=model.purchase_price,

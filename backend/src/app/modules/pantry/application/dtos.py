@@ -14,6 +14,7 @@ class AddItemCommand:
     unit: str
     category: str = "uncategorised"
     barcode: Optional[str] = None
+    image_url: Optional[str] = None
     expiry_date: Optional[date] = None
     purchase_price: Optional[Decimal] = None
     purchase_date: Optional[date] = None

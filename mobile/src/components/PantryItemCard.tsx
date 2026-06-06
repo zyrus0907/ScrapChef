@@ -4,6 +4,7 @@ import * as Haptics from 'expo-haptics';
 import { PantryItem } from '../api/pantry';
 import { Colors, Radius, Spacing, Typography } from '../theme';
 import { ExpiryBadge } from './ExpiryBadge';
+import { FoodImage } from './FoodImage';
 import { usePantryStore } from '../store/pantry.store';
 
 interface PantryItemCardProps {
@@ -31,7 +32,13 @@ export const PantryItemCard: React.FC<PantryItemCardProps> = ({ item, onPress })
       onLongPress={handleLongPress}
       style={({ pressed }) => [styles.card, pressed && { opacity: 0.8 }, isLowExpiry && styles.urgentCard]}
     >
-      <View style={styles.categoryBar} />
+      <FoodImage
+        imageUrl={item.image_url}
+        name={item.name}
+        category={item.category}
+        size={68}
+        radius={0}
+      />
       <View style={styles.content}>
         <View style={styles.header}>
           <Text style={styles.name} numberOfLines={1}>{item.name}</Text>
@@ -67,10 +74,6 @@ const styles = StyleSheet.create({
   },
   urgentCard: {
     borderColor: `${Colors.warning}50`,
-  },
-  categoryBar: {
-    width: 3,
-    backgroundColor: Colors.gold,
   },
   content: {
     flex: 1,

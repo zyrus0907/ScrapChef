@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { HomeScreen } from '../screens/home/HomeScreen';
 import { PantryScreen } from '../screens/pantry/PantryScreen';
 import { AddItemScreen } from '../screens/pantry/AddItemScreen';
+import { ScanScreen } from '../screens/pantry/ScanScreen';
 import { ItemDetailScreen } from '../screens/pantry/ItemDetailScreen';
 import { RecipesScreen } from '../screens/recipes/RecipesScreen';
 import { RecipeDetailScreen } from '../screens/recipes/RecipeDetailScreen';
@@ -75,8 +76,28 @@ const HomeNavigator = () => (
 
 const PantryNavigator = () => (
   <PantryStack.Navigator screenOptions={screenOptions}>
-    <PantryStack.Screen name="PantryList" component={PantryScreen} options={{ title: 'PANTRY', headerTitleStyle: titleSmall }} />
+    <PantryStack.Screen
+      name="PantryList"
+      component={PantryScreen}
+      options={({ navigation }) => ({
+        title: 'PANTRY',
+        headerTitleStyle: titleSmall,
+        headerRight: () => (
+          <Text
+            onPress={() => navigation.navigate('Scan')}
+            style={{ color: Colors.gold, marginRight: 16, fontSize: 13, fontWeight: '600' }}
+          >
+            ⊞ Scan
+          </Text>
+        ),
+      })}
+    />
     <PantryStack.Screen name="AddItem" component={AddItemScreen} options={{ title: 'ADD ITEM', headerTitleStyle: titleSmall }} />
+    <PantryStack.Screen
+      name="Scan"
+      component={ScanScreen}
+      options={{ title: 'SCAN BARCODE', headerTitleStyle: titleSmall }}
+    />
     <PantryStack.Screen name="ItemDetail" component={ItemDetailScreen} options={{ title: '' }} />
   </PantryStack.Navigator>
 );
