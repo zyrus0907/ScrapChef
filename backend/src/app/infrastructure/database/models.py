@@ -11,6 +11,9 @@ from app.modules.identity.infrastructure.models import (  # noqa: F401
     RefreshTokenModel,
     UserModel,
 )
+from app.modules.notifications.infrastructure.models import (  # noqa: F401
+    NotificationModel,
+)
 from app.modules.pantry.infrastructure.models import PantryItemModel  # noqa: F401
 from app.modules.recipes.infrastructure.models import (  # noqa: F401
     RecipeIngredientModel,

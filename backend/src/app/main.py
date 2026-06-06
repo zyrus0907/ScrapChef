@@ -6,6 +6,10 @@ from app.core.config import get_settings
 from app.core.logging import configure_logging, get_logger
 from app.infrastructure.api.error_handlers import register_exception_handlers
 from app.infrastructure.api.router import api_router
+from app.modules.notifications.infrastructure.scheduler import (
+    shutdown_scheduler,
+    start_scheduler,
+)
 
 settings = get_settings()
 log = get_logger()
@@ -15,7 +19,9 @@ log = get_logger()
 async def lifespan(app: FastAPI):
     configure_logging(settings.DEBUG)
     log.info("app.startup", env=settings.ENVIRONMENT)
+    start_scheduler()
     yield
+    shutdown_scheduler()
     log.info("app.shutdown")
 
 

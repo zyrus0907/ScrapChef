@@ -32,6 +32,11 @@ class Settings(BaseSettings):
     LLM_API_KEY: str = ""
     LLM_MODEL: str = "claude-opus-4-8"
 
+    # --- Background jobs (Step 10) ---
+    ENABLE_SCHEDULER: bool = True
+    EXPIRY_SCAN_WITHIN_DAYS: int = 3
+    EXPIRY_SCAN_HOUR_UTC: int = 7
+
     @computed_field
     @property
     def DATABASE_URL(self) -> str:
