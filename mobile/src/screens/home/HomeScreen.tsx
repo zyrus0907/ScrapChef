@@ -71,6 +71,11 @@ export const HomeScreen = ({ navigation }: any) => {
           <Text style={styles.sectionTitle}>Quick Actions</Text>
           <View style={styles.actionsGrid}>
             <QuickAction
+              icon="🧾"
+              label="Scan Receipt"
+              onPress={() => navigation.navigate('Pantry', { screen: 'ReceiptScan' })}
+            />
+            <QuickAction
               icon="⊞"
               label="Scan Item"
               onPress={() => navigation.navigate('Pantry', { screen: 'Scan' })}

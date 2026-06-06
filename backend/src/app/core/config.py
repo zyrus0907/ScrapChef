@@ -34,6 +34,11 @@ class Settings(BaseSettings):
     LLM_API_KEY: str = ""
     LLM_MODEL: str = "claude-opus-4-8"
 
+    # Gemini (free tier) — powers receipt + recipe vision parsing.
+    # Get a free key at https://aistudio.google.com/app/apikey
+    GEMINI_API_KEY: str = ""
+    GEMINI_MODEL: str = "gemini-3.5-flash"
+
     # --- Background jobs (Step 10) ---
     ENABLE_SCHEDULER: bool = True
     EXPIRY_SCAN_WITHIN_DAYS: int = 3

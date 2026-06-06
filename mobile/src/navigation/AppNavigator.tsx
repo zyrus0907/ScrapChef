@@ -1,17 +1,19 @@
 import React from 'react';
-import { Text } from 'react-native';
+import { Text, View } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { HomeScreen } from '../screens/home/HomeScreen';
 import { PantryScreen } from '../screens/pantry/PantryScreen';
 import { AddItemScreen } from '../screens/pantry/AddItemScreen';
 import { ScanScreen } from '../screens/pantry/ScanScreen';
+import { ReceiptScanScreen } from '../screens/pantry/ReceiptScanScreen';
 import { ItemDetailScreen } from '../screens/pantry/ItemDetailScreen';
 import { RecipesScreen } from '../screens/recipes/RecipesScreen';
 import { RecipeDetailScreen } from '../screens/recipes/RecipeDetailScreen';
 import { CostDashboardScreen } from '../screens/costs/CostDashboardScreen';
 import { ShoppingScreen } from '../screens/shopping/ShoppingScreen';
 import { ShoppingListDetailScreen } from '../screens/shopping/ShoppingListDetailScreen';
+import { RecipeImportScreen } from '../screens/shopping/RecipeImportScreen';
 import { LeftoverChefScreen } from '../screens/assistant/LeftoverChefScreen';
 import { NotificationsScreen } from '../screens/notifications/NotificationsScreen';
 import { HeaderBell } from '../components/HeaderBell';
@@ -83,12 +85,14 @@ const PantryNavigator = () => (
         title: 'PANTRY',
         headerTitleStyle: titleSmall,
         headerRight: () => (
-          <Text
-            onPress={() => navigation.navigate('Scan')}
-            style={{ color: Colors.gold, marginRight: 16, fontSize: 13, fontWeight: '600' }}
-          >
-            ⊞ Scan
-          </Text>
+          <View style={{ flexDirection: 'row', gap: 14, marginRight: 16 }}>
+            <Text onPress={() => navigation.navigate('ReceiptScan')} style={{ color: Colors.gold, fontSize: 13, fontWeight: '600' }}>
+              🧾 Receipt
+            </Text>
+            <Text onPress={() => navigation.navigate('Scan')} style={{ color: Colors.gold, fontSize: 13, fontWeight: '600' }}>
+              ⊞ Scan
+            </Text>
+          </View>
         ),
       })}
     />
@@ -97,6 +101,11 @@ const PantryNavigator = () => (
       name="Scan"
       component={ScanScreen}
       options={{ title: 'SCAN BARCODE', headerTitleStyle: titleSmall }}
+    />
+    <PantryStack.Screen
+      name="ReceiptScan"
+      component={ReceiptScanScreen}
+      options={{ title: 'SCAN RECEIPT', headerTitleStyle: titleSmall }}
     />
     <PantryStack.Screen name="ItemDetail" component={ItemDetailScreen} options={{ title: '' }} />
   </PantryStack.Navigator>
@@ -111,8 +120,24 @@ const RecipeNavigator = () => (
 
 const ShoppingNavigator = () => (
   <ShoppingStack.Navigator screenOptions={screenOptions}>
-    <ShoppingStack.Screen name="ShoppingLists" component={ShoppingScreen} options={{ title: 'SHOPPING', headerTitleStyle: titleSmall }} />
+    <ShoppingStack.Screen
+      name="ShoppingLists"
+      component={ShoppingScreen}
+      options={({ navigation }) => ({
+        title: 'SHOPPING',
+        headerTitleStyle: titleSmall,
+        headerRight: () => (
+          <Text
+            onPress={() => navigation.navigate('RecipeImport')}
+            style={{ color: Colors.gold, marginRight: 16, fontSize: 13, fontWeight: '600' }}
+          >
+            🍳 Import
+          </Text>
+        ),
+      })}
+    />
     <ShoppingStack.Screen name="ShoppingListDetail" component={ShoppingListDetailScreen} options={{ title: 'LIST', headerTitleStyle: titleSmall }} />
+    <ShoppingStack.Screen name="RecipeImport" component={RecipeImportScreen} options={{ title: 'IMPORT RECIPE', headerTitleStyle: titleSmall }} />
   </ShoppingStack.Navigator>
 );
 
