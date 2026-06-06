@@ -29,7 +29,7 @@ export const HomeScreen = ({ navigation }: any) => {
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={['#1A1400', Colors.background]}
+        colors={[Colors.goldDim, Colors.background]}
         style={styles.headerGradient}
       />
 
@@ -171,8 +171,7 @@ const styles = StyleSheet.create({
   },
   statValue: {
     fontSize: 28,
-    fontWeight: '200',
-    fontFamily: 'serif',
+    fontWeight: '700',
     color: Colors.gold,
   },
   statLabel: {

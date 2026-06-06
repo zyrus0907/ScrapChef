@@ -49,13 +49,13 @@ export const Button: React.FC<ButtonProps> = ({
       >
         {({ pressed }) => (
           <LinearGradient
-            colors={isDisabled ? ['#555', '#444'] : pressed ? ['#A8802A', '#8A6820'] : ['#C4962A', '#A8802A']}
+            colors={isDisabled ? ['#D3DBD7', '#C7D0CB'] : pressed ? ['#0CA678', '#099268'] : ['#1CC58F', '#12B886']}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={[styles.base, { height: heights[size], borderRadius: Radius.md }]}
           >
             {loading ? (
-              <ActivityIndicator color={Colors.background} size="small" />
+              <ActivityIndicator color={Colors.onPrimary} size="small" />
             ) : (
               <Text style={[styles.primaryLabel, { fontSize: fontSizes[size] }]}>{label}</Text>
             )}
@@ -103,14 +103,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
   },
   primaryLabel: {
-    color: Colors.background,
+    color: Colors.onPrimary,
     fontWeight: '700',
-    letterSpacing: 1.5,
-    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   label: {
     fontWeight: '600',
-    letterSpacing: 1,
-    textTransform: 'uppercase',
+    letterSpacing: 0.3,
   },
 });

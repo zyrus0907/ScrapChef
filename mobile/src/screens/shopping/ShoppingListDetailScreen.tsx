@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   checkboxOn: { backgroundColor: Colors.gold, borderColor: Colors.gold },
-  checkmark: { color: Colors.background, fontSize: 14, fontWeight: '700' },
+  checkmark: { color: Colors.onPrimary, fontSize: 14, fontWeight: '700' },
   itemName: { ...Typography.titleSmall, color: Colors.textPrimary },
   itemDone: { textDecorationLine: 'line-through', color: Colors.textMuted },
   itemMeta: { ...Typography.bodySmall, color: Colors.textSecondary, marginTop: 2 },

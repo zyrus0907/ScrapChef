@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
   },
   fabIcon: {
     fontSize: 28,
-    color: Colors.background,
+    color: Colors.onPrimary,
     fontWeight: '300',
     lineHeight: 32,
   },

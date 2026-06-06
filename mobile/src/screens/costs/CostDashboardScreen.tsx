@@ -50,7 +50,7 @@ export const CostDashboardScreen = () => {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.scroll}>
-      <LinearGradient colors={['#1A1400', Colors.background]} style={styles.headerGradient} />
+      <LinearGradient colors={[Colors.goldDim, Colors.background]} style={styles.headerGradient} />
 
       <Text style={styles.heading}>Cost Analytics</Text>
       <Text style={styles.sub}>Your kitchen economics</Text>
@@ -65,7 +65,7 @@ export const CostDashboardScreen = () => {
         <>
           <View style={styles.heroCard}>
             <LinearGradient
-              colors={['#2A1F00', '#1A1400']}
+              colors={['#1CC58F', '#0CA678']}
               style={styles.heroGradient}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
@@ -151,12 +151,12 @@ const styles = StyleSheet.create({
     borderColor: Colors.borderStrong,
   },
   heroGradient: { padding: Spacing.xl },
-  heroLabel: { ...Typography.overline, color: Colors.goldLight, marginBottom: 4 },
-  heroValue: { fontSize: 56, fontWeight: '100', color: Colors.gold, fontFamily: 'serif', lineHeight: 64 },
-  heroSub: { ...Typography.bodySmall, color: Colors.textSecondary, marginBottom: Spacing.lg },
-  heroBar: { height: 6, backgroundColor: Colors.surface, borderRadius: 999, flexDirection: 'row', overflow: 'hidden' },
-  heroBarFill: { height: '100%', backgroundColor: Colors.success },
-  heroBarWaste: { height: '100%', backgroundColor: Colors.danger },
+  heroLabel: { ...Typography.overline, color: 'rgba(255,255,255,0.85)', marginBottom: 4 },
+  heroValue: { fontSize: 56, fontWeight: '800', color: Colors.onPrimary, letterSpacing: -1, lineHeight: 60 },
+  heroSub: { ...Typography.bodySmall, color: 'rgba(255,255,255,0.85)', marginBottom: Spacing.lg },
+  heroBar: { height: 8, backgroundColor: 'rgba(255,255,255,0.25)', borderRadius: 999, flexDirection: 'row', overflow: 'hidden' },
+  heroBarFill: { height: '100%', backgroundColor: Colors.onPrimary },
+  heroBarWaste: { height: '100%', backgroundColor: 'rgba(255,255,255,0.35)' },
   statsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm, marginBottom: Spacing.xl },
   sectionTitle: { ...Typography.titleMedium, color: Colors.textPrimary, marginBottom: Spacing.md },
   chartCard: {
@@ -180,6 +180,6 @@ const styles = StyleSheet.create({
 
 const statStyles = StyleSheet.create({
   card: { width: '48%', alignItems: 'center', paddingVertical: Spacing.md, gap: 4 },
-  value: { fontSize: 20, fontWeight: '300', color: Colors.gold, fontFamily: 'serif' },
+  value: { fontSize: 22, fontWeight: '700', color: Colors.gold },
   label: { ...Typography.caption, color: Colors.textMuted, textAlign: 'center', letterSpacing: 1, textTransform: 'uppercase' },
 });

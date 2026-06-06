@@ -38,7 +38,7 @@ export const LeftoverChefScreen = () => {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <LinearGradient colors={['#1A1400', Colors.background]} style={styles.headerGradient} />
+      <LinearGradient colors={[Colors.goldDim, Colors.background]} style={styles.headerGradient} />
       <Text style={styles.heading}>Leftover Chef</Text>
       <Text style={styles.sub}>Turn what you have into something to cook</Text>
 
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   toggleOn: { backgroundColor: Colors.gold, borderColor: Colors.gold },
-  toggleMark: { color: Colors.background, fontWeight: '700', fontSize: 13 },
+  toggleMark: { color: Colors.onPrimary, fontWeight: '700', fontSize: 13 },
   toggleLabel: { ...Typography.bodyMedium, color: Colors.textSecondary },
   providerNote: { ...Typography.bodySmall, color: Colors.textMuted, marginTop: Spacing.sm, textAlign: 'center' },
   error: { ...Typography.bodyMedium, color: Colors.danger, marginTop: Spacing.md, textAlign: 'center' },

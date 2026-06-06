@@ -43,7 +43,7 @@ export const RegisterScreen = ({ navigation }: any) => {
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={['#1A1400', Colors.background, Colors.background]}
+        colors={[Colors.goldDim, Colors.background, Colors.background]}
         style={StyleSheet.absoluteFill}
       />
 

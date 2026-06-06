@@ -7,7 +7,7 @@ import { LoadingSpinner } from '../components/ui/LoadingSpinner';
 import { Colors } from '../theme';
 
 const navigationTheme = {
-  dark: true,
+  dark: false,
   colors: {
     primary: Colors.gold,
     background: Colors.background,

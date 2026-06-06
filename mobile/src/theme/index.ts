@@ -11,26 +11,27 @@ export const Spacing = {
 } as const;
 
 export const Radius = {
-  sm: 4,
-  md: 8,
-  lg: 12,
-  xl: 20,
+  sm: 8,
+  md: 12,
+  lg: 18,
+  xl: 26,
   full: 999,
 } as const;
 
+// Soft, light-theme shadows — gentle lift, no heavy dark halos.
 export const Shadow = {
   gold: {
-    shadowColor: '#C4962A',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 12,
-    elevation: 8,
+    shadowColor: '#12B886',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.18,
+    shadowRadius: 16,
+    elevation: 4,
   },
   subtle: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.4,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowColor: '#1E2D29',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.06,
+    shadowRadius: 12,
+    elevation: 2,
   },
 } as const;
