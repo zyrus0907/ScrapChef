@@ -91,3 +91,8 @@ class RefreshTokenModel(UUIDPrimaryKeyMixin, Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
+
+    # Many-to-one to the owning user. Without this relationship SQLAlchemy's
+    # unit of work doesn't know a refresh_token insert must follow its user,
+    # and can emit them in the wrong order (FK violation on register/login).
+    user: Mapped["UserModel"] = relationship("UserModel")
