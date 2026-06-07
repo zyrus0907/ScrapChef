@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { assistantApi, ReceiptLine } from '../../api/assistant';
+import { pantryApi } from '../../api/pantry';
 import { pickImageBase64 } from '../../utils/imagePicker';
 import { usePantryStore } from '../../store/pantry.store';
 import { Button } from '../../components/ui/Button';
@@ -10,16 +11,17 @@ import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { Colors, Radius, Spacing, Typography } from '../../theme';
 import { formatCurrency, toNumber } from '../../utils/format';
 
-type Phase = 'idle' | 'parsing' | 'review' | 'adding';
+type Phase = 'idle' | 'parsing' | 'review' | 'adding' | 'done';
 type Line = ReceiptLine & { include: boolean; key: string };
 
 export const ReceiptScanScreen = ({ navigation }: any) => {
-  const { addItem } = usePantryStore();
+  const { fetchItems } = usePantryStore();
   const [phase, setPhase] = useState<Phase>('idle');
   const [lines, setLines] = useState<Line[]>([]);
   const [available, setAvailable] = useState(true);
   const [storeName, setStoreName] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [added, setAdded] = useState(0);
 
   const pick = async () => {
     setError(null);
@@ -45,24 +47,47 @@ export const ReceiptScanScreen = ({ navigation }: any) => {
 
   const addAll = async () => {
     setPhase('adding');
-    for (const l of chosen) {
-      try {
-        await addItem({
+    // Fire all adds in parallel (fast) and tolerate individual failures.
+    const results = await Promise.allSettled(
+      chosen.map((l) =>
+        pantryApi.add({
           name: l.name,
           quantity: toNumber(l.quantity) || 1,
           unit: l.unit || 'unit',
           category: l.category || undefined,
           purchase_price: l.price != null ? toNumber(l.price) : undefined,
-        });
-      } catch {
-        /* keep going */
-      }
+        })
+      )
+    );
+    const ok = results.filter((r) => r.status === 'fulfilled').length;
+    setAdded(ok);
+    try {
+      await fetchItems(); // refresh the pantry list for when they navigate there
+    } catch {
+      /* non-fatal */
     }
-    navigation.navigate('PantryList');
+    setPhase('done');
   };
 
   if (phase === 'parsing') return <LoadingSpinner message="Reading your receipt…" />;
   if (phase === 'adding') return <LoadingSpinner message={`Adding ${chosen.length} items…`} />;
+
+  if (phase === 'done') {
+    return (
+      <View style={styles.centered}>
+        <Text style={styles.bigEmoji}>✅</Text>
+        <Text style={styles.title}>Added to pantry</Text>
+        <Text style={styles.message}>
+          {added} item{added === 1 ? '' : 's'} added{storeName ? ` from ${storeName}` : ''}. Their prices feed
+          your cost tracker too.
+        </Text>
+        <Button label="View pantry" onPress={() => navigation.navigate('PantryList')} />
+        <Pressable onPress={() => { setPhase('idle'); setLines([]); setAdded(0); }} style={styles.linkBtn}>
+          <Text style={styles.link}>Scan another receipt</Text>
+        </Pressable>
+      </View>
+    );
+  }
 
   if (phase === 'review') {
     if (!available) {
