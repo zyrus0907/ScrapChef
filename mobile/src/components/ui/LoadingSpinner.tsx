@@ -1,29 +1,33 @@
 import React from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
-import { Colors, Typography } from '../../theme';
+import { Typography, useColors, useThemedStyles, type Palette } from '../../theme';
 
 interface LoadingSpinnerProps {
   message?: string;
 }
 
-export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ message }) => (
-  <View style={styles.container}>
-    <ActivityIndicator size="large" color={Colors.gold} />
-    {message ? <Text style={styles.text}>{message}</Text> : null}
-  </View>
-);
+export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ message }) => {
+  const C = useColors();
+  const styles = useThemedStyles(makeStyles);
+  return (
+    <View style={styles.container}>
+      <ActivityIndicator size="large" color={C.gold} />
+      {message ? <Text style={styles.text}>{message}</Text> : null}
+    </View>
+  );
+};
 
-const styles = StyleSheet.create({
+const makeStyles = (C: Palette) => StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.background,
+    backgroundColor: C.background,
     gap: 16,
   },
   text: {
     ...Typography.labelLarge,
-    color: Colors.textSecondary,
+    color: C.textSecondary,
     letterSpacing: 2,
     textTransform: 'uppercase',
   },

@@ -7,10 +7,12 @@ import { Input } from '../../components/ui/Input';
 import { Button } from '../../components/ui/Button';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
-import { Colors, Radius, Spacing, Typography } from '../../theme';
+import { Radius, Spacing, Typography, useColors, useThemedStyles, type Palette } from '../../theme';
 import { toNumber } from '../../utils/format';
 
 export const ShoppingScreen = ({ navigation }: any) => {
+  const C = useColors();
+  const styles = useThemedStyles(makeStyles);
   const { lists, suggestions, isLoading, fetchLists, fetchSuggestions, createList } =
     useShoppingStore();
   const [newName, setNewName] = useState('');
@@ -123,27 +125,27 @@ export const ShoppingScreen = ({ navigation }: any) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background },
+const makeStyles = (C: Palette) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: C.background },
   content: { padding: Spacing.xl, paddingBottom: 100, flexGrow: 1 },
   createRow: { marginBottom: Spacing.sm },
-  sectionTitle: { ...Typography.overline, color: Colors.gold, marginBottom: 2, marginTop: Spacing.lg },
-  sectionHint: { ...Typography.bodySmall, color: Colors.textMuted, marginBottom: Spacing.sm },
+  sectionTitle: { ...Typography.overline, color: C.gold, marginBottom: 2, marginTop: Spacing.lg },
+  sectionHint: { ...Typography.bodySmall, color: C.textMuted, marginBottom: Spacing.sm },
   suggestBlock: { marginTop: Spacing.sm },
   suggestCard: { flexDirection: 'row', alignItems: 'center', marginBottom: Spacing.sm },
-  suggestName: { ...Typography.titleSmall, color: Colors.textPrimary },
-  suggestMeta: { ...Typography.bodySmall, color: Colors.textSecondary, marginTop: 2 },
+  suggestName: { ...Typography.titleSmall, color: C.textPrimary },
+  suggestMeta: { ...Typography.bodySmall, color: C.textSecondary, marginTop: 2 },
   addBtn: {
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.xs,
     borderRadius: Radius.full,
     borderWidth: 1,
-    borderColor: Colors.gold,
-    backgroundColor: Colors.goldDim,
+    borderColor: C.gold,
+    backgroundColor: C.goldDim,
   },
-  addBtnText: { ...Typography.labelSmall, color: Colors.gold },
+  addBtnText: { ...Typography.labelSmall, color: C.gold },
   listCard: { flexDirection: 'row', alignItems: 'center', marginBottom: Spacing.sm },
-  listName: { ...Typography.titleMedium, color: Colors.textPrimary },
-  listMeta: { ...Typography.bodySmall, color: Colors.textSecondary, marginTop: 2 },
-  chevron: { fontSize: 28, color: Colors.textMuted, fontWeight: '300' },
+  listName: { ...Typography.titleMedium, color: C.textPrimary },
+  listMeta: { ...Typography.bodySmall, color: C.textSecondary, marginTop: 2 },
+  chevron: { fontSize: 28, color: C.textMuted, fontWeight: '300' },
 });

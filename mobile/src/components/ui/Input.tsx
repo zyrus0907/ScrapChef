@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, TextInput, TextInputProps, View, ViewStyle, Pressable } from 'react-native';
-import { Colors, Radius, Spacing, Typography } from '../../theme';
+import { Radius, Spacing, Typography, useColors, useThemedStyles, type Palette } from '../../theme';
 
 interface InputProps extends Omit<TextInputProps, 'style'> {
   label: string;
@@ -18,13 +18,15 @@ export const Input: React.FC<InputProps> = ({
   rightIcon,
   ...props
 }) => {
+  const C = useColors();
+  const styles = useThemedStyles(makeStyles);
   const [focused, setFocused] = useState(false);
 
   const borderColor = error
-    ? Colors.danger
+    ? C.danger
     : focused
-    ? Colors.gold
-    : Colors.border;
+    ? C.gold
+    : C.border;
 
   return (
     <View style={[styles.container, containerStyle]}>
@@ -32,7 +34,7 @@ export const Input: React.FC<InputProps> = ({
       <View style={[styles.inputWrapper, { borderColor }]}>
         <TextInput
           style={styles.input}
-          placeholderTextColor={Colors.textMuted}
+          placeholderTextColor={C.textMuted}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
           {...props}
@@ -48,13 +50,13 @@ export const Input: React.FC<InputProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const makeStyles = (C: Palette) => StyleSheet.create({
   container: {
     marginBottom: Spacing.md,
   },
   label: {
     ...Typography.overline,
-    color: Colors.textSecondary,
+    color: C.textSecondary,
     marginBottom: Spacing.sm,
   },
   inputWrapper: {
@@ -62,13 +64,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 1,
     borderRadius: Radius.md,
-    backgroundColor: Colors.surface,
+    backgroundColor: C.surface,
     paddingHorizontal: Spacing.md,
   },
   input: {
     flex: 1,
     height: 52,
-    color: Colors.textPrimary,
+    color: C.textPrimary,
     ...Typography.bodyLarge,
   },
   rightIcon: {
@@ -76,12 +78,12 @@ const styles = StyleSheet.create({
   },
   error: {
     ...Typography.bodySmall,
-    color: Colors.danger,
+    color: C.danger,
     marginTop: 4,
   },
   hint: {
     ...Typography.bodySmall,
-    color: Colors.textMuted,
+    color: C.textMuted,
     marginTop: 4,
   },
 });

@@ -2,9 +2,11 @@ import React, { useEffect } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useNotificationsStore } from '../store/notifications.store';
-import { Colors, Typography } from '../theme';
+import { Typography, useColors, useThemedStyles, type Palette } from '../theme';
 
 export const HeaderBell = () => {
+  const C = useColors();
+  const styles = useThemedStyles(makeStyles);
   const navigation = useNavigation<any>();
   const { unread, fetchUnread } = useNotificationsStore();
 
@@ -30,9 +32,9 @@ export const HeaderBell = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const makeStyles = (C: Palette) => StyleSheet.create({
   wrap: { marginRight: 16, width: 28, height: 28, alignItems: 'center', justifyContent: 'center' },
-  bell: { fontSize: 20, color: Colors.gold },
+  bell: { fontSize: 20, color: C.gold },
   badge: {
     position: 'absolute',
     top: -2,
@@ -40,7 +42,7 @@ const styles = StyleSheet.create({
     minWidth: 16,
     height: 16,
     borderRadius: 8,
-    backgroundColor: Colors.danger,
+    backgroundColor: C.danger,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 3,

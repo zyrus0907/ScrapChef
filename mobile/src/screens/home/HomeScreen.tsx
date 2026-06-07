@@ -5,7 +5,7 @@ import { usePantryStore } from '../../store/pantry.store';
 import { useAuthStore } from '../../store/auth.store';
 import { PantryItemCard } from '../../components/PantryItemCard';
 import { Card } from '../../components/ui/Card';
-import { Colors, Spacing, Typography } from '../../theme';
+import { Spacing, Typography, useColors, useThemedStyles, type Palette } from '../../theme';
 
 const GREETING = () => {
   const h = new Date().getHours();
@@ -15,6 +15,8 @@ const GREETING = () => {
 };
 
 export const HomeScreen = ({ navigation }: any) => {
+  const C = useColors();
+  const styles = useThemedStyles(makeStyles);
   const { user } = useAuthStore();
   const { items, expiringSoon, fetchItems, fetchExpiringSoon } = usePantryStore();
 
@@ -29,7 +31,7 @@ export const HomeScreen = ({ navigation }: any) => {
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={[Colors.goldDim, Colors.background]}
+        colors={[C.goldDim, C.background]}
         style={styles.headerGradient}
       />
 
@@ -44,8 +46,8 @@ export const HomeScreen = ({ navigation }: any) => {
 
         <View style={styles.statsRow}>
           <StatCard label="In Pantry" value={activeItems.length} />
-          <StatCard label="Expiring" value={expiringSoon.length} accent={Colors.warning} />
-          <StatCard label="Expired" value={expiredItems.length} accent={Colors.danger} />
+          <StatCard label="Expiring" value={expiringSoon.length} accent={C.warning} />
+          <StatCard label="Expired" value={expiredItems.length} accent={C.danger} />
         </View>
 
         {expiringSoon.length > 0 ? (
@@ -107,17 +109,21 @@ export const HomeScreen = ({ navigation }: any) => {
 const StatCard = ({
   label,
   value,
-  accent = Colors.gold,
+  accent,
 }: {
   label: string;
   value: number;
   accent?: string;
-}) => (
-  <Card style={styles.statCard}>
-    <Text style={[styles.statValue, { color: accent }]}>{value}</Text>
-    <Text style={styles.statLabel}>{label}</Text>
-  </Card>
-);
+}) => {
+  const C = useColors();
+  const styles = useThemedStyles(makeStyles);
+  return (
+    <Card style={styles.statCard}>
+      <Text style={[styles.statValue, { color: accent ?? C.gold }]}>{value}</Text>
+      <Text style={styles.statLabel}>{label}</Text>
+    </Card>
+  );
+};
 
 const QuickAction = ({
   icon,
@@ -127,15 +133,18 @@ const QuickAction = ({
   icon: string;
   label: string;
   onPress: () => void;
-}) => (
-  <Card onPress={onPress} style={styles.quickAction} gold>
-    <Text style={styles.quickIcon}>{icon}</Text>
-    <Text style={styles.quickLabel}>{label}</Text>
-  </Card>
-);
+}) => {
+  const styles = useThemedStyles(makeStyles);
+  return (
+    <Card onPress={onPress} style={styles.quickAction} gold>
+      <Text style={styles.quickIcon}>{icon}</Text>
+      <Text style={styles.quickLabel}>{label}</Text>
+    </Card>
+  );
+};
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background },
+const makeStyles = (C: Palette) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: C.background },
   headerGradient: {
     position: 'absolute',
     top: 0,
@@ -150,16 +159,16 @@ const styles = StyleSheet.create({
   },
   greeting: {
     ...Typography.bodyLarge,
-    color: Colors.textSecondary,
+    color: C.textSecondary,
   },
   userName: {
     ...Typography.displayMedium,
-    color: Colors.textPrimary,
+    color: C.textPrimary,
     marginBottom: 4,
   },
   date: {
     ...Typography.labelSmall,
-    color: Colors.textMuted,
+    color: C.textMuted,
     letterSpacing: 1,
   },
   statsRow: {
@@ -177,11 +186,11 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 28,
     fontWeight: '700',
-    color: Colors.gold,
+    color: C.gold,
   },
   statLabel: {
     ...Typography.caption,
-    color: Colors.textMuted,
+    color: C.textMuted,
     letterSpacing: 1.5,
     textTransform: 'uppercase',
   },
@@ -197,24 +206,24 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     ...Typography.titleLarge,
-    color: Colors.textPrimary,
+    color: C.textPrimary,
   },
   urgentPill: {
-    backgroundColor: Colors.warningDim,
+    backgroundColor: C.warningDim,
     borderWidth: 1,
-    borderColor: Colors.warning,
+    borderColor: C.warning,
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 999,
   },
   urgentPillText: {
     ...Typography.caption,
-    color: Colors.warning,
+    color: C.warning,
     letterSpacing: 0.5,
   },
   sectionSub: {
     ...Typography.bodySmall,
-    color: Colors.textMuted,
+    color: C.textMuted,
     marginBottom: Spacing.md,
   },
   actionsGrid: {
@@ -232,11 +241,11 @@ const styles = StyleSheet.create({
   },
   quickIcon: {
     fontSize: 22,
-    color: Colors.gold,
+    color: C.gold,
   },
   quickLabel: {
     ...Typography.labelSmall,
-    color: Colors.textSecondary,
+    color: C.textSecondary,
     letterSpacing: 1,
     textTransform: 'uppercase',
   },

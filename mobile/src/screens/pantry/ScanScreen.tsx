@@ -6,9 +6,11 @@ import { lookupBarcode } from '../../api/barcode';
 import { decodeBarcodeFromUri } from '../../utils/decodeBarcode';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
-import { Colors, Radius, Spacing, Typography } from '../../theme';
+import { Radius, Spacing, Typography, useColors, useThemedStyles, type Palette } from '../../theme';
 
 export const ScanScreen = ({ navigation }: any) => {
+  const C = useColors();
+  const styles = useThemedStyles(makeStyles);
   const [permission, requestPermission] = useCameraPermissions();
   const [looking, setLooking] = useState(false);
   const [manual, setManual] = useState('');
@@ -59,7 +61,7 @@ export const ScanScreen = ({ navigation }: any) => {
     if (!cameraUnsupported && !permission) {
       return (
         <View style={styles.centered}>
-          <ActivityIndicator color={Colors.gold} />
+          <ActivityIndicator color={C.gold} />
         </View>
       );
     }
@@ -128,7 +130,7 @@ export const ScanScreen = ({ navigation }: any) => {
       </View>
       {looking ? (
         <View style={styles.lookingBar}>
-          <ActivityIndicator color={Colors.onPrimary} />
+          <ActivityIndicator color={C.onPrimary} />
           <Text style={styles.lookingText}>Finding product…</Text>
         </View>
       ) : null}
@@ -139,11 +141,11 @@ export const ScanScreen = ({ navigation }: any) => {
   );
 };
 
-const styles = StyleSheet.create({
+const makeStyles = (C: Palette) => StyleSheet.create({
   container: { flex: 1, backgroundColor: '#000' },
   centered: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: C.background,
     alignItems: 'center',
     justifyContent: 'center',
     padding: Spacing.xl,
@@ -151,22 +153,22 @@ const styles = StyleSheet.create({
   },
   webWrap: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: C.background,
     padding: Spacing.xl,
     justifyContent: 'center',
   },
   bigEmoji: { fontSize: 48, textAlign: 'center' },
-  title: { ...Typography.displaySmall, color: Colors.textPrimary, textAlign: 'center' },
+  title: { ...Typography.displaySmall, color: C.textPrimary, textAlign: 'center' },
   message: {
     ...Typography.bodyMedium,
-    color: Colors.textSecondary,
+    color: C.textSecondary,
     textAlign: 'center',
     marginBottom: Spacing.lg,
   },
   orRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md, marginVertical: Spacing.lg },
-  line: { flex: 1, height: 1, backgroundColor: Colors.border },
-  orText: { ...Typography.labelSmall, color: Colors.textMuted },
-  note: { ...Typography.bodySmall, color: Colors.warning, marginTop: Spacing.md, textAlign: 'center' },
+  line: { flex: 1, height: 1, backgroundColor: C.border },
+  orText: { ...Typography.labelSmall, color: C.textMuted },
+  note: { ...Typography.bodySmall, color: C.warning, marginTop: Spacing.md, textAlign: 'center' },
   overlay: {
     position: 'absolute',
     top: 0,
@@ -177,10 +179,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: Spacing.lg,
   },
-  frame: { width: 260, height: 170, borderRadius: Radius.lg, borderWidth: 3, borderColor: Colors.onPrimary },
+  frame: { width: 260, height: 170, borderRadius: Radius.lg, borderWidth: 3, borderColor: C.onPrimary },
   hint: {
     ...Typography.labelLarge,
-    color: Colors.onPrimary,
+    color: C.onPrimary,
     backgroundColor: 'rgba(0,0,0,0.5)',
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.xs,
@@ -199,7 +201,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
     borderRadius: Radius.full,
   },
-  lookingText: { ...Typography.labelSmall, color: Colors.onPrimary },
+  lookingText: { ...Typography.labelSmall, color: C.onPrimary },
   manualBtn: {
     position: 'absolute',
     bottom: Spacing.xl,
@@ -209,7 +211,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
     borderRadius: Radius.full,
   },
-  manualText: { ...Typography.labelLarge, color: Colors.textPrimary },
+  manualText: { ...Typography.labelLarge, color: C.textPrimary },
   linkBtn: { paddingVertical: Spacing.md, alignItems: 'center' },
-  link: { ...Typography.bodyMedium, color: Colors.gold },
+  link: { ...Typography.bodyMedium, color: C.gold },
 });

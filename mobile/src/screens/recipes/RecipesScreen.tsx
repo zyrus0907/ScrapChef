@@ -11,7 +11,7 @@ import { recipesApi, RecipeMatch } from '../../api/recipes';
 import { RecipeCard } from '../../components/RecipeCard';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
-import { Colors, Radius, Spacing, Typography } from '../../theme';
+import { Radius, Spacing, Typography, useColors, useThemedStyles, type Palette } from '../../theme';
 
 const MODES = [
   { key: 'strict', label: 'Perfect Match', icon: '✦', sub: 'All ingredients on hand' },
@@ -23,6 +23,8 @@ const MODES = [
 type ModeKey = typeof MODES[number]['key'];
 
 export const RecipesScreen = ({ navigation }: any) => {
+  const C = useColors();
+  const styles = useThemedStyles(makeStyles);
   const [activeMode, setActiveMode] = useState<ModeKey>('strict');
   const [results, setResults] = useState<RecipeMatch[]>([]);
   const [loading, setLoading] = useState(false);
@@ -105,8 +107,8 @@ export const RecipesScreen = ({ navigation }: any) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background },
+const makeStyles = (C: Palette) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: C.background },
   modeBar: {
     paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing.md,
@@ -117,29 +119,29 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
     borderRadius: Radius.lg,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: C.border,
     alignItems: 'center',
     minWidth: 110,
     gap: 4,
   },
   modeTabActive: {
-    backgroundColor: Colors.goldDim,
-    borderColor: Colors.gold,
+    backgroundColor: C.goldDim,
+    borderColor: C.gold,
   },
   modeIcon: {
     fontSize: 16,
-    color: Colors.textMuted,
+    color: C.textMuted,
   },
   modeIconActive: {
-    color: Colors.gold,
+    color: C.gold,
   },
   modeLabel: {
     ...Typography.labelSmall,
-    color: Colors.textSecondary,
+    color: C.textSecondary,
     textAlign: 'center',
   },
   modeLabelActive: {
-    color: Colors.gold,
+    color: C.gold,
   },
   modeDescription: {
     flexDirection: 'row',
@@ -149,12 +151,12 @@ const styles = StyleSheet.create({
   },
   modeDescText: {
     ...Typography.bodySmall,
-    color: Colors.textMuted,
+    color: C.textMuted,
     fontStyle: 'italic',
   },
   count: {
     ...Typography.labelSmall,
-    color: Colors.textSecondary,
+    color: C.textSecondary,
   },
   list: {
     paddingHorizontal: Spacing.xl,

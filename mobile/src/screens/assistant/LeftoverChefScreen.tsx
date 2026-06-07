@@ -6,9 +6,11 @@ import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { FoodImage } from '../../components/FoodImage';
-import { Colors, Radius, Spacing, Typography } from '../../theme';
+import { Radius, Spacing, Typography, useColors, useThemedStyles, type Palette } from '../../theme';
 
 export const LeftoverChefScreen = () => {
+  const C = useColors();
+  const styles = useThemedStyles(makeStyles);
   const [recipes, setRecipes] = useState<GeneratedRecipe[]>([]);
   const [provider, setProvider] = useState<string | null>(null);
   const [considered, setConsidered] = useState(0);
@@ -42,7 +44,7 @@ export const LeftoverChefScreen = () => {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <LinearGradient colors={[Colors.goldDim, Colors.background]} style={styles.headerGradient} />
+      <LinearGradient colors={[C.goldDim, C.background]} style={styles.headerGradient} />
       <Text style={styles.heading}>Leftover Chef</Text>
       <Text style={styles.sub}>Turn what you have into something to cook</Text>
 
@@ -111,38 +113,38 @@ export const LeftoverChefScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background },
+const makeStyles = (C: Palette) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: C.background },
   headerGradient: { position: 'absolute', top: 0, left: 0, right: 0, height: 160 },
   content: { padding: Spacing.xl },
-  heading: { ...Typography.displaySmall, color: Colors.textPrimary, marginBottom: 4 },
-  sub: { ...Typography.bodyMedium, color: Colors.textSecondary, marginBottom: Spacing.lg },
+  heading: { ...Typography.displaySmall, color: C.textPrimary, marginBottom: 4 },
+  sub: { ...Typography.bodyMedium, color: C.textSecondary, marginBottom: Spacing.lg },
   toggleRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm, marginBottom: Spacing.md },
   toggle: {
     width: 22,
     height: 22,
     borderRadius: Radius.sm,
     borderWidth: 1.5,
-    borderColor: Colors.borderStrong,
+    borderColor: C.borderStrong,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  toggleOn: { backgroundColor: Colors.gold, borderColor: Colors.gold },
-  toggleMark: { color: Colors.onPrimary, fontWeight: '700', fontSize: 13 },
-  toggleLabel: { ...Typography.bodyMedium, color: Colors.textSecondary },
-  providerNote: { ...Typography.bodySmall, color: Colors.textMuted, marginTop: Spacing.sm, textAlign: 'center' },
-  error: { ...Typography.bodyMedium, color: Colors.danger, marginTop: Spacing.md, textAlign: 'center' },
+  toggleOn: { backgroundColor: C.gold, borderColor: C.gold },
+  toggleMark: { color: C.onPrimary, fontWeight: '700', fontSize: 13 },
+  toggleLabel: { ...Typography.bodyMedium, color: C.textSecondary },
+  providerNote: { ...Typography.bodySmall, color: C.textMuted, marginTop: Spacing.sm, textAlign: 'center' },
+  error: { ...Typography.bodyMedium, color: C.danger, marginTop: Spacing.md, textAlign: 'center' },
   recipeCard: { marginBottom: Spacing.md },
   recipeHeader: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md },
-  recipeName: { ...Typography.titleLarge, color: Colors.textPrimary },
-  badge: { alignSelf: 'flex-start', marginTop: 4, backgroundColor: Colors.warningDim, borderRadius: Radius.full, paddingHorizontal: Spacing.sm, paddingVertical: 2 },
-  badgeText: { ...Typography.caption, color: Colors.warning, letterSpacing: 1 },
-  recipeDesc: { ...Typography.bodyMedium, color: Colors.textSecondary, marginTop: Spacing.xs },
-  meta: { ...Typography.labelSmall, color: Colors.gold, marginTop: Spacing.sm },
-  subhead: { ...Typography.overline, color: Colors.textMuted, marginTop: Spacing.md, marginBottom: Spacing.xs },
-  chips: { ...Typography.bodyMedium, color: Colors.textPrimary },
-  chipsMuted: { ...Typography.bodyMedium, color: Colors.textSecondary },
+  recipeName: { ...Typography.titleLarge, color: C.textPrimary },
+  badge: { alignSelf: 'flex-start', marginTop: 4, backgroundColor: C.warningDim, borderRadius: Radius.full, paddingHorizontal: Spacing.sm, paddingVertical: 2 },
+  badgeText: { ...Typography.caption, color: C.warning, letterSpacing: 1 },
+  recipeDesc: { ...Typography.bodyMedium, color: C.textSecondary, marginTop: Spacing.xs },
+  meta: { ...Typography.labelSmall, color: C.gold, marginTop: Spacing.sm },
+  subhead: { ...Typography.overline, color: C.textMuted, marginTop: Spacing.md, marginBottom: Spacing.xs },
+  chips: { ...Typography.bodyMedium, color: C.textPrimary },
+  chipsMuted: { ...Typography.bodyMedium, color: C.textSecondary },
   stepRow: { flexDirection: 'row', gap: Spacing.sm, marginBottom: Spacing.xs },
-  stepNum: { ...Typography.labelSmall, color: Colors.gold, width: 16 },
-  stepText: { ...Typography.bodyMedium, color: Colors.textPrimary, flex: 1, lineHeight: 20 },
+  stepNum: { ...Typography.labelSmall, color: C.gold, width: 16 },
+  stepText: { ...Typography.bodyMedium, color: C.textPrimary, flex: 1, lineHeight: 20 },
 });

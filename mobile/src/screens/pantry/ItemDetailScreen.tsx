@@ -6,10 +6,12 @@ import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { ExpiryBadge } from '../../components/ExpiryBadge';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
-import { Colors, Spacing, Typography } from '../../theme';
+import { Spacing, Typography, useColors, useThemedStyles, type Palette } from '../../theme';
 import { formatDate, formatCurrency } from '../../utils/format';
 
 export const ItemDetailScreen = ({ route, navigation }: any) => {
+  const C = useColors();
+  const styles = useThemedStyles(makeStyles);
   const { itemId } = route.params;
   const { consumeItem, wasteItem, deleteItem } = usePantryStore();
   const [item, setItem] = useState<PantryItem | null>(null);
@@ -73,7 +75,7 @@ export const ItemDetailScreen = ({ route, navigation }: any) => {
         {item.expiry_date ? <DetailRow label="Expires" value={formatDate(item.expiry_date)} /> : null}
         {item.purchase_date ? <DetailRow label="Purchased" value={formatDate(item.purchase_date)} /> : null}
         {item.purchase_price ? (
-          <DetailRow label="Purchase Price" value={formatCurrency(item.purchase_price)} accent={Colors.gold} />
+          <DetailRow label="Purchase Price" value={formatCurrency(item.purchase_price)} accent={C.gold} />
         ) : null}
         {item.notes ? <DetailRow label="Notes" value={item.notes} /> : null}
         <DetailRow label="Added" value={formatDate(item.created_at)} />
@@ -104,20 +106,25 @@ const DetailRow = ({
   label: string;
   value: string;
   accent?: string;
-}) => (
-  <View style={detailStyles.row}>
-    <Text style={detailStyles.label}>{label}</Text>
-    <Text style={[detailStyles.value, accent ? { color: accent } : {}]}>{value}</Text>
-  </View>
-);
+}) => {
+  const detailStyles = useThemedStyles(makeDetailStyles);
+  return (
+    <View style={detailStyles.row}>
+      <Text style={detailStyles.label}>{label}</Text>
+      <Text style={[detailStyles.value, accent ? { color: accent } : {}]}>{value}</Text>
+    </View>
+  );
+};
 
 const StatusPill = ({ status }: { status: string }) => {
+  const C = useColors();
+  const statusStyles = useThemedStyles(makeStatusStyles);
   const colors: Record<string, string> = {
-    active: Colors.success,
-    consumed: Colors.gold,
-    wasted: Colors.danger,
+    active: C.success,
+    consumed: C.gold,
+    wasted: C.danger,
   };
-  const color = colors[status] ?? Colors.textMuted;
+  const color = colors[status] ?? C.textMuted;
   return (
     <View style={[statusStyles.pill, { backgroundColor: `${color}20`, borderColor: `${color}50` }]}>
       <Text style={[statusStyles.text, { color }]}>{status.toUpperCase()}</Text>
@@ -125,8 +132,8 @@ const StatusPill = ({ status }: { status: string }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background },
+const makeStyles = (C: Palette) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: C.background },
   scroll: { padding: Spacing.xl, paddingBottom: Spacing.xxl },
   header: {
     gap: Spacing.sm,
@@ -134,7 +141,7 @@ const styles = StyleSheet.create({
   },
   name: {
     ...Typography.displaySmall,
-    color: Colors.textPrimary,
+    color: C.textPrimary,
   },
   infoCard: { marginBottom: Spacing.xl },
   actions: {
@@ -146,20 +153,20 @@ const styles = StyleSheet.create({
   deleteBtn: { marginTop: Spacing.sm },
 });
 
-const detailStyles = StyleSheet.create({
+const makeDetailStyles = (C: Palette) => StyleSheet.create({
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
+    borderBottomColor: C.border,
   },
-  label: { ...Typography.labelLarge, color: Colors.textSecondary },
-  value: { ...Typography.bodyMedium, color: Colors.textPrimary, maxWidth: '60%', textAlign: 'right' },
+  label: { ...Typography.labelLarge, color: C.textSecondary },
+  value: { ...Typography.bodyMedium, color: C.textPrimary, maxWidth: '60%', textAlign: 'right' },
 });
 
-const statusStyles = StyleSheet.create({
+const makeStatusStyles = (C: Palette) => StyleSheet.create({
   pill: {
     alignSelf: 'flex-start',
     paddingHorizontal: 10,

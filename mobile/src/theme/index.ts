@@ -1,5 +1,13 @@
-export { Colors } from './colors';
+export { Colors, lightColors, darkColors } from './colors';
+export type { Palette, ColorKey } from './colors';
 export { Typography } from './typography';
+export {
+  ThemeProvider,
+  useTheme,
+  useColors,
+  useThemedStyles,
+} from './ThemeContext';
+export type { ThemeMode } from './ThemeContext';
 
 export const Spacing = {
   xs: 4,

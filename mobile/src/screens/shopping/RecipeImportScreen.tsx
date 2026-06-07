@@ -8,13 +8,15 @@ import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { Input } from '../../components/ui/Input';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
-import { Colors, Radius, Spacing, Typography } from '../../theme';
+import { Radius, Spacing, Typography, useColors, useThemedStyles, type Palette } from '../../theme';
 import { toNumber } from '../../utils/format';
 
 type Phase = 'idle' | 'parsing' | 'review' | 'adding';
 type Ing = ParsedIngredient & { include: boolean; key: string };
 
 export const RecipeImportScreen = ({ navigation }: any) => {
+  const C = useColors();
+  const styles = useThemedStyles(makeStyles);
   const { lists, fetchLists, createList } = useShoppingStore();
   const [phase, setPhase] = useState<Phase>('idle');
   const [text, setText] = useState('');
@@ -182,29 +184,29 @@ export const RecipeImportScreen = ({ navigation }: any) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background },
+const makeStyles = (C: Palette) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: C.background },
   scroll: { padding: Spacing.xl, paddingBottom: Spacing.xxl },
-  centered: { flex: 1, backgroundColor: Colors.background, alignItems: 'center', justifyContent: 'center', padding: Spacing.xl, gap: Spacing.md },
+  centered: { flex: 1, backgroundColor: C.background, alignItems: 'center', justifyContent: 'center', padding: Spacing.xl, gap: Spacing.md },
   bigEmoji: { fontSize: 44, textAlign: 'center' },
-  title: { ...Typography.displaySmall, color: Colors.textPrimary, textAlign: 'center' },
-  message: { ...Typography.bodyMedium, color: Colors.textSecondary, textAlign: 'center', marginBottom: Spacing.md },
-  error: { ...Typography.bodyMedium, color: Colors.danger, textAlign: 'center', marginTop: Spacing.sm },
+  title: { ...Typography.displaySmall, color: C.textPrimary, textAlign: 'center' },
+  message: { ...Typography.bodyMedium, color: C.textSecondary, textAlign: 'center', marginBottom: Spacing.md },
+  error: { ...Typography.bodyMedium, color: C.danger, textAlign: 'center', marginTop: Spacing.sm },
   orRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md, marginVertical: Spacing.lg },
-  line: { flex: 1, height: 1, backgroundColor: Colors.border },
-  orText: { ...Typography.labelSmall, color: Colors.textMuted },
+  line: { flex: 1, height: 1, backgroundColor: C.border },
+  orText: { ...Typography.labelSmall, color: C.textMuted },
   row: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md, marginBottom: Spacing.sm },
   rowOff: { opacity: 0.5 },
-  name: { ...Typography.titleSmall, color: Colors.textPrimary },
+  name: { ...Typography.titleSmall, color: C.textPrimary },
   nameOff: { textDecorationLine: 'line-through' },
-  meta: { ...Typography.bodySmall, color: Colors.textSecondary, marginTop: 2 },
-  check: { width: 24, height: 24, borderRadius: Radius.sm, borderWidth: 1.5, borderColor: Colors.borderStrong, alignItems: 'center', justifyContent: 'center' },
-  checkOn: { backgroundColor: Colors.gold, borderColor: Colors.gold },
-  checkMark: { color: Colors.onPrimary, fontWeight: '700', fontSize: 14 },
-  sectionLabel: { ...Typography.overline, color: Colors.textSecondary, marginTop: Spacing.lg, marginBottom: Spacing.sm },
+  meta: { ...Typography.bodySmall, color: C.textSecondary, marginTop: 2 },
+  check: { width: 24, height: 24, borderRadius: Radius.sm, borderWidth: 1.5, borderColor: C.borderStrong, alignItems: 'center', justifyContent: 'center' },
+  checkOn: { backgroundColor: C.gold, borderColor: C.gold },
+  checkMark: { color: C.onPrimary, fontWeight: '700', fontSize: 14 },
+  sectionLabel: { ...Typography.overline, color: C.textSecondary, marginTop: Spacing.lg, marginBottom: Spacing.sm },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.xs },
-  chip: { paddingHorizontal: Spacing.md, paddingVertical: Spacing.xs, borderRadius: Radius.full, borderWidth: 1, borderColor: Colors.border },
-  chipOn: { backgroundColor: Colors.goldDim, borderColor: Colors.gold },
-  chipText: { ...Typography.labelSmall, color: Colors.textSecondary },
-  chipTextOn: { color: Colors.goldLight },
+  chip: { paddingHorizontal: Spacing.md, paddingVertical: Spacing.xs, borderRadius: Radius.full, borderWidth: 1, borderColor: C.border },
+  chipOn: { backgroundColor: C.goldDim, borderColor: C.gold },
+  chipText: { ...Typography.labelSmall, color: C.textSecondary },
+  chipTextOn: { color: C.goldLight },
 });

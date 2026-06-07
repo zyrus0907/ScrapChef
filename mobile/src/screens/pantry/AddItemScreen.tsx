@@ -12,11 +12,13 @@ import { usePantryStore } from '../../store/pantry.store';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { FoodImage } from '../../components/FoodImage';
-import { Colors, Radius, Spacing, Typography } from '../../theme';
+import { Radius, Spacing, Typography, useColors, useThemedStyles, type Palette } from '../../theme';
 
 const CATEGORIES = ['Produce', 'Dairy', 'Meat', 'Pantry', 'Frozen', 'Beverages', 'Snacks', 'Other'];
 
 export const AddItemScreen = ({ navigation, route }: any) => {
+  const C = useColors();
+  const styles = useThemedStyles(makeStyles);
   const { addItem, isLoading } = usePantryStore();
   const prefill = route?.params?.prefill ?? {};
 
@@ -163,20 +165,20 @@ export const AddItemScreen = ({ navigation, route }: any) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background },
+const makeStyles = (C: Palette) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: C.background },
   scroll: {
     padding: Spacing.xl,
     paddingBottom: Spacing.xxl,
   },
   heading: {
     ...Typography.displaySmall,
-    color: Colors.textPrimary,
+    color: C.textPrimary,
     marginBottom: 4,
   },
   sub: {
     ...Typography.bodyMedium,
-    color: Colors.textSecondary,
+    color: C.textSecondary,
     marginBottom: Spacing.xl,
   },
   row: {
@@ -188,18 +190,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: Spacing.md,
     alignItems: 'center',
-    backgroundColor: Colors.goldDim,
+    backgroundColor: C.goldDim,
     borderRadius: Radius.lg,
     padding: Spacing.md,
     marginBottom: Spacing.lg,
   },
   scannedTag: { alignSelf: 'flex-start', marginBottom: 4 },
-  scannedTagText: { ...Typography.caption, color: Colors.goldLight, letterSpacing: 1 },
-  scannedName: { ...Typography.titleMedium, color: Colors.textPrimary },
-  scannedBrand: { ...Typography.bodySmall, color: Colors.textSecondary, marginTop: 2 },
+  scannedTagText: { ...Typography.caption, color: C.goldLight, letterSpacing: 1 },
+  scannedName: { ...Typography.titleMedium, color: C.textPrimary },
+  scannedBrand: { ...Typography.bodySmall, color: C.textSecondary, marginTop: 2 },
   sectionLabel: {
     ...Typography.overline,
-    color: Colors.textSecondary,
+    color: C.textSecondary,
     marginBottom: Spacing.sm,
   },
   chipRow: {

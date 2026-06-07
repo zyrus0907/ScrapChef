@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { RecipeMatch } from '../api/recipes';
 import { Card } from './ui/Card';
 import { FoodImage } from './FoodImage';
-import { Colors, Radius, Spacing, Typography } from '../theme';
+import { Radius, Spacing, Typography, useColors, useThemedStyles, type Palette } from '../theme';
 
 interface RecipeCardProps {
   match: RecipeMatch;
@@ -11,13 +11,15 @@ interface RecipeCardProps {
 }
 
 export const RecipeCard: React.FC<RecipeCardProps> = ({ match, onPress }) => {
+  const C = useColors();
+  const styles = useThemedStyles(makeStyles);
   const { recipe, match_percentage, coverage, expiry_boost } = match;
   const missing_ingredients = coverage.filter((c) => !c.is_matched).map((c) => c.ingredient_name);
   const pct = Math.round(match_percentage * 100);
   const hasExpiryBoost = expiry_boost > 0;
 
   const matchColor =
-    pct === 100 ? Colors.success : pct >= 80 ? Colors.gold : pct >= 60 ? Colors.warning : Colors.textMuted;
+    pct === 100 ? C.success : pct >= 80 ? C.gold : pct >= 60 ? C.warning : C.textMuted;
 
   const totalTime = (recipe.prep_time_minutes ?? 0) + (recipe.cook_time_minutes ?? 0);
 
@@ -74,7 +76,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ match, onPress }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const makeStyles = (C: Palette) => StyleSheet.create({
   card: {
     marginBottom: Spacing.sm,
   },
@@ -94,20 +96,20 @@ const styles = StyleSheet.create({
   },
   name: {
     ...Typography.titleLarge,
-    color: Colors.textPrimary,
+    color: C.textPrimary,
   },
   urgentBadge: {
     alignSelf: 'flex-start',
-    backgroundColor: Colors.dangerDim,
+    backgroundColor: C.dangerDim,
     borderWidth: 1,
-    borderColor: Colors.danger,
+    borderColor: C.danger,
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: Radius.full,
   },
   urgentText: {
     ...Typography.caption,
-    color: Colors.danger,
+    color: C.danger,
     letterSpacing: 1,
   },
   matchCircle: {
@@ -130,7 +132,7 @@ const styles = StyleSheet.create({
   },
   description: {
     ...Typography.bodySmall,
-    color: Colors.textSecondary,
+    color: C.textSecondary,
     marginBottom: Spacing.sm,
     lineHeight: 18,
   },
@@ -143,15 +145,15 @@ const styles = StyleSheet.create({
   },
   meta: {
     ...Typography.labelSmall,
-    color: Colors.textSecondary,
+    color: C.textSecondary,
   },
   missing: {
     ...Typography.bodySmall,
-    color: Colors.warning,
+    color: C.warning,
   },
   complete: {
     ...Typography.bodySmall,
-    color: Colors.success,
+    color: C.success,
   },
   tags: {
     flexDirection: 'row',
@@ -160,13 +162,13 @@ const styles = StyleSheet.create({
     marginTop: Spacing.sm,
   },
   tag: {
-    backgroundColor: Colors.goldDim,
+    backgroundColor: C.goldDim,
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: Radius.full,
   },
   tagText: {
     ...Typography.caption,
-    color: Colors.goldLight,
+    color: C.goldLight,
   },
 });

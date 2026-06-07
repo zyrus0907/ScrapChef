@@ -13,9 +13,11 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useAuthStore } from '../../store/auth.store';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
-import { Colors, Spacing, Typography } from '../../theme';
+import { Spacing, Typography, useColors, useThemedStyles, type Palette } from '../../theme';
 
 export const LoginScreen = ({ navigation }: any) => {
+  const C = useColors();
+  const styles = useThemedStyles(makeStyles);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -34,7 +36,7 @@ export const LoginScreen = ({ navigation }: any) => {
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={[Colors.goldDim, Colors.background, Colors.background]}
+        colors={[C.goldDim, C.background, C.background]}
         style={StyleSheet.absoluteFill}
       />
 
@@ -107,10 +109,10 @@ export const LoginScreen = ({ navigation }: any) => {
   );
 };
 
-const styles = StyleSheet.create({
+const makeStyles = (C: Palette) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: C.background,
   },
   keyboardView: {
     flex: 1,
@@ -127,48 +129,48 @@ const styles = StyleSheet.create({
   },
   logo: {
     fontSize: 32,
-    color: Colors.gold,
+    color: C.gold,
     marginBottom: Spacing.sm,
   },
   appName: {
     ...Typography.overline,
     fontSize: 13,
-    color: Colors.gold,
+    color: C.gold,
     letterSpacing: 6,
     marginBottom: Spacing.xs,
   },
   tagline: {
     ...Typography.bodySmall,
-    color: Colors.textMuted,
+    color: C.textMuted,
     letterSpacing: 1.5,
     fontStyle: 'italic',
   },
   divider: {
     height: 1,
-    backgroundColor: Colors.border,
+    backgroundColor: C.border,
     marginBottom: Spacing.xl,
   },
   heading: {
     ...Typography.displaySmall,
-    color: Colors.textPrimary,
+    color: C.textPrimary,
     marginBottom: Spacing.xs,
   },
   subheading: {
     ...Typography.bodyMedium,
-    color: Colors.textSecondary,
+    color: C.textSecondary,
     marginBottom: Spacing.xl,
   },
   errorBox: {
-    backgroundColor: Colors.dangerDim,
+    backgroundColor: C.dangerDim,
     borderWidth: 1,
-    borderColor: Colors.danger,
+    borderColor: C.danger,
     borderRadius: 8,
     padding: Spacing.md,
     marginBottom: Spacing.md,
   },
   errorText: {
     ...Typography.bodySmall,
-    color: Colors.danger,
+    color: C.danger,
   },
   cta: {
     marginTop: Spacing.sm,
@@ -176,7 +178,7 @@ const styles = StyleSheet.create({
   },
   showHide: {
     ...Typography.caption,
-    color: Colors.gold,
+    color: C.gold,
     letterSpacing: 1,
   },
   link: {
@@ -185,10 +187,10 @@ const styles = StyleSheet.create({
   },
   linkText: {
     ...Typography.bodyMedium,
-    color: Colors.textSecondary,
+    color: C.textSecondary,
   },
   linkAccent: {
-    color: Colors.gold,
+    color: C.gold,
     fontWeight: '600',
   },
 });

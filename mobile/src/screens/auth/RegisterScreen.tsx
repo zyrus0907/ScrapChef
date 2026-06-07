@@ -13,9 +13,11 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useAuthStore } from '../../store/auth.store';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
-import { Colors, Spacing, Typography } from '../../theme';
+import { Spacing, Typography, useColors, useThemedStyles, type Palette } from '../../theme';
 
 export const RegisterScreen = ({ navigation }: any) => {
+  const C = useColors();
+  const styles = useThemedStyles(makeStyles);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -43,7 +45,7 @@ export const RegisterScreen = ({ navigation }: any) => {
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={[Colors.goldDim, Colors.background, Colors.background]}
+        colors={[C.goldDim, C.background, C.background]}
         style={StyleSheet.absoluteFill}
       />
 
@@ -123,8 +125,8 @@ export const RegisterScreen = ({ navigation }: any) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background },
+const makeStyles = (C: Palette) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: C.background },
   keyboardView: { flex: 1 },
   scroll: {
     flexGrow: 1,
@@ -138,36 +140,36 @@ const styles = StyleSheet.create({
   },
   logo: {
     fontSize: 28,
-    color: Colors.gold,
+    color: C.gold,
     marginBottom: Spacing.xs,
   },
   appName: {
     ...Typography.overline,
     fontSize: 12,
-    color: Colors.gold,
+    color: C.gold,
     letterSpacing: 5,
   },
   heading: {
     ...Typography.displaySmall,
-    color: Colors.textPrimary,
+    color: C.textPrimary,
     marginBottom: Spacing.xs,
   },
   subheading: {
     ...Typography.bodyMedium,
-    color: Colors.textSecondary,
+    color: C.textSecondary,
     marginBottom: Spacing.xl,
   },
   errorBox: {
-    backgroundColor: Colors.dangerDim,
+    backgroundColor: C.dangerDim,
     borderWidth: 1,
-    borderColor: Colors.danger,
+    borderColor: C.danger,
     borderRadius: 8,
     padding: Spacing.md,
     marginBottom: Spacing.md,
   },
-  errorText: { ...Typography.bodySmall, color: Colors.danger },
+  errorText: { ...Typography.bodySmall, color: C.danger },
   cta: { marginTop: Spacing.sm, marginBottom: Spacing.lg },
   link: { alignItems: 'center', paddingVertical: Spacing.sm },
-  linkText: { ...Typography.bodyMedium, color: Colors.textSecondary },
-  linkAccent: { color: Colors.gold, fontWeight: '600' },
+  linkText: { ...Typography.bodyMedium, color: C.textSecondary },
+  linkAccent: { color: C.gold, fontWeight: '600' },
 });

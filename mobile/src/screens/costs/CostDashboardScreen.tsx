@@ -5,7 +5,7 @@ import { costsApi, CostSummary, MonthlySnapshot } from '../../api/costs';
 import { Card } from '../../components/ui/Card';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { EmptyState } from '../../components/ui/EmptyState';
-import { Colors, Spacing, Typography } from '../../theme';
+import { Spacing, Typography, useColors, useThemedStyles, type Palette } from '../../theme';
 import { formatCurrency, formatPercent, toNumber } from '../../utils/format';
 
 // "2026-06" -> "Jun"
@@ -21,6 +21,8 @@ const savingsRate = (saved: number, wasted: number): number => {
 };
 
 export const CostDashboardScreen = () => {
+  const C = useColors();
+  const styles = useThemedStyles(makeStyles);
   const [summary, setSummary] = useState<CostSummary | null>(null);
   const [history, setHistory] = useState<MonthlySnapshot[]>([]);
   const [loading, setLoading] = useState(true);
@@ -50,7 +52,7 @@ export const CostDashboardScreen = () => {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.scroll}>
-      <LinearGradient colors={[Colors.goldDim, Colors.background]} style={styles.headerGradient} />
+      <LinearGradient colors={[C.goldDim, C.background]} style={styles.headerGradient} />
 
       <Text style={styles.heading}>Cost Analytics</Text>
       <Text style={styles.sub}>Your kitchen economics</Text>
@@ -82,8 +84,8 @@ export const CostDashboardScreen = () => {
           </View>
 
           <View style={styles.statsGrid}>
-            <StatBlock label="Saved" value={formatCurrency(saved)} accent={Colors.success} />
-            <StatBlock label="Wasted" value={formatCurrency(wasted)} accent={Colors.danger} />
+            <StatBlock label="Saved" value={formatCurrency(saved)} accent={C.success} />
+            <StatBlock label="Wasted" value={formatCurrency(wasted)} accent={C.danger} />
             <StatBlock label="Net Savings" value={formatCurrency(toNumber(summary?.net_savings))} />
             <StatBlock label="Waste Rate" value={formatPercent(wRate)} />
           </View>
@@ -114,11 +116,11 @@ export const CostDashboardScreen = () => {
 
           <View style={styles.legend}>
             <View style={styles.legendItem}>
-              <View style={[styles.legendDot, { backgroundColor: Colors.success }]} />
+              <View style={[styles.legendDot, { backgroundColor: C.success }]} />
               <Text style={styles.legendText}>Saved</Text>
             </View>
             <View style={styles.legendItem}>
-              <View style={[styles.legendDot, { backgroundColor: Colors.danger }]} />
+              <View style={[styles.legendDot, { backgroundColor: C.danger }]} />
               <Text style={styles.legendText}>Wasted</Text>
             </View>
           </View>
@@ -130,35 +132,38 @@ export const CostDashboardScreen = () => {
   );
 };
 
-const StatBlock = ({ label, value, accent }: { label: string; value: string; accent?: string }) => (
+const StatBlock = ({ label, value, accent }: { label: string; value: string; accent?: string }) => {
+  const statStyles = useThemedStyles(makeStatStyles);
+  return (
   <Card style={statStyles.card}>
     <Text style={[statStyles.value, accent ? { color: accent } : {}]}>{value}</Text>
     <Text style={statStyles.label}>{label}</Text>
   </Card>
-);
+  );
+};
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background },
+const makeStyles = (C: Palette) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: C.background },
   headerGradient: { position: 'absolute', top: 0, left: 0, right: 0, height: 180 },
   scroll: { padding: Spacing.xl },
-  heading: { ...Typography.displaySmall, color: Colors.textPrimary, marginBottom: 4 },
-  sub: { ...Typography.bodyMedium, color: Colors.textSecondary, marginBottom: Spacing.lg },
+  heading: { ...Typography.displaySmall, color: C.textPrimary, marginBottom: 4 },
+  sub: { ...Typography.bodyMedium, color: C.textSecondary, marginBottom: Spacing.lg },
   heroCard: {
     borderRadius: 16,
     overflow: 'hidden',
     marginBottom: Spacing.lg,
     borderWidth: 1,
-    borderColor: Colors.borderStrong,
+    borderColor: C.borderStrong,
   },
   heroGradient: { padding: Spacing.xl },
   heroLabel: { ...Typography.overline, color: 'rgba(255,255,255,0.85)', marginBottom: 4 },
-  heroValue: { fontSize: 56, fontWeight: '800', color: Colors.onPrimary, letterSpacing: -1, lineHeight: 60 },
+  heroValue: { fontSize: 56, fontWeight: '800', color: C.onPrimary, letterSpacing: -1, lineHeight: 60 },
   heroSub: { ...Typography.bodySmall, color: 'rgba(255,255,255,0.85)', marginBottom: Spacing.lg },
   heroBar: { height: 8, backgroundColor: 'rgba(255,255,255,0.25)', borderRadius: 999, flexDirection: 'row', overflow: 'hidden' },
-  heroBarFill: { height: '100%', backgroundColor: Colors.onPrimary },
+  heroBarFill: { height: '100%', backgroundColor: C.onPrimary },
   heroBarWaste: { height: '100%', backgroundColor: 'rgba(255,255,255,0.35)' },
   statsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm, marginBottom: Spacing.xl },
-  sectionTitle: { ...Typography.titleMedium, color: Colors.textPrimary, marginBottom: Spacing.md },
+  sectionTitle: { ...Typography.titleMedium, color: C.textPrimary, marginBottom: Spacing.md },
   chartCard: {
     flexDirection: 'row',
     alignItems: 'flex-end',
@@ -167,19 +172,19 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
   },
   chartCol: { flex: 1, alignItems: 'center', gap: 4 },
-  chartAmt: { ...Typography.caption, color: Colors.textMuted, fontSize: 8 },
+  chartAmt: { ...Typography.caption, color: C.textMuted, fontSize: 8 },
   barWrapper: { height: 80, justifyContent: 'flex-end', width: 24, gap: 2 },
-  savedBar: { width: 24, backgroundColor: Colors.success, borderRadius: 4, opacity: 0.85 },
-  wasteBar: { width: 24, backgroundColor: Colors.danger, borderRadius: 4, opacity: 0.85 },
-  chartLabel: { ...Typography.caption, color: Colors.textSecondary, letterSpacing: 0.5 },
+  savedBar: { width: 24, backgroundColor: C.success, borderRadius: 4, opacity: 0.85 },
+  wasteBar: { width: 24, backgroundColor: C.danger, borderRadius: 4, opacity: 0.85 },
+  chartLabel: { ...Typography.caption, color: C.textSecondary, letterSpacing: 0.5 },
   legend: { flexDirection: 'row', gap: Spacing.lg, paddingHorizontal: Spacing.sm },
   legendItem: { flexDirection: 'row', alignItems: 'center', gap: Spacing.xs },
   legendDot: { width: 8, height: 8, borderRadius: 4 },
-  legendText: { ...Typography.bodySmall, color: Colors.textSecondary },
+  legendText: { ...Typography.bodySmall, color: C.textSecondary },
 });
 
-const statStyles = StyleSheet.create({
+const makeStatStyles = (C: Palette) => StyleSheet.create({
   card: { width: '48%', alignItems: 'center', paddingVertical: Spacing.md, gap: 4 },
-  value: { fontSize: 22, fontWeight: '700', color: Colors.gold },
-  label: { ...Typography.caption, color: Colors.textMuted, textAlign: 'center', letterSpacing: 1, textTransform: 'uppercase' },
+  value: { fontSize: 22, fontWeight: '700', color: C.gold },
+  label: { ...Typography.caption, color: C.textMuted, textAlign: 'center', letterSpacing: 1, textTransform: 'uppercase' },
 });

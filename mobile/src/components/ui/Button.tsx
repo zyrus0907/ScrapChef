@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
-import { Colors, Typography, Radius } from '../../theme';
+import { Typography, Radius, useColors, useThemedStyles, type Palette } from '../../theme';
 
 interface ButtonProps {
   label: string;
@@ -31,6 +31,8 @@ export const Button: React.FC<ButtonProps> = ({
   style,
   fullWidth = true,
 }) => {
+  const C = useColors();
+  const styles = useThemedStyles(makeStyles);
   const handlePress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     onPress();
@@ -55,7 +57,7 @@ export const Button: React.FC<ButtonProps> = ({
             style={[styles.base, { height: heights[size], borderRadius: Radius.md }]}
           >
             {loading ? (
-              <ActivityIndicator color={Colors.onPrimary} size="small" />
+              <ActivityIndicator color={C.onPrimary} size="small" />
             ) : (
               <Text style={[styles.primaryLabel, { fontSize: fontSizes[size] }]}>{label}</Text>
             )}
@@ -67,13 +69,13 @@ export const Button: React.FC<ButtonProps> = ({
 
   const outlineStyle =
     variant === 'outline'
-      ? { borderColor: Colors.borderStrong, borderWidth: 1 }
+      ? { borderColor: C.borderStrong, borderWidth: 1 }
       : variant === 'danger'
-      ? { borderColor: Colors.danger, borderWidth: 1 }
+      ? { borderColor: C.danger, borderWidth: 1 }
       : {};
 
   const labelColor =
-    variant === 'danger' ? Colors.danger : variant === 'ghost' ? Colors.textSecondary : Colors.gold;
+    variant === 'danger' ? C.danger : variant === 'ghost' ? C.textSecondary : C.gold;
 
   return (
     <Pressable
@@ -96,14 +98,14 @@ export const Button: React.FC<ButtonProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const makeStyles = (C: Palette) => StyleSheet.create({
   base: {
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 24,
   },
   primaryLabel: {
-    color: Colors.onPrimary,
+    color: C.onPrimary,
     fontWeight: '700',
     letterSpacing: 0.5,
   },

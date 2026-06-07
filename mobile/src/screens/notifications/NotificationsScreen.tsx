@@ -5,13 +5,13 @@ import { AppNotification } from '../../api/notifications';
 import { Card } from '../../components/ui/Card';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
-import { Colors, Radius, Spacing, Typography } from '../../theme';
+import { Radius, Spacing, Typography, useColors, useThemedStyles, type Palette } from '../../theme';
 import { formatDate } from '../../utils/format';
 
-const typeColor = (type: string): string => {
-  if (type === 'expired') return Colors.danger;
-  if (type === 'expiring_soon') return Colors.warning;
-  return Colors.info;
+const typeColor = (type: string, C: Palette): string => {
+  if (type === 'expired') return C.danger;
+  if (type === 'expiring_soon') return C.warning;
+  return C.info;
 };
 
 const typeIcon = (type: string): string => {
@@ -21,6 +21,8 @@ const typeIcon = (type: string): string => {
 };
 
 export const NotificationsScreen = () => {
+  const C = useColors();
+  const styles = useThemedStyles(makeStyles);
   const { items, isLoading, fetch, markRead, markAllRead, scan } = useNotificationsStore();
 
   useEffect(() => {
@@ -56,7 +58,7 @@ export const NotificationsScreen = () => {
               style={StyleSheet.flatten([styles.card, !item.is_read && styles.cardUnread])}
               onPress={() => onPressItem(item)}
             >
-              <Text style={[styles.icon, { color: typeColor(item.type) }]}>{typeIcon(item.type)}</Text>
+              <Text style={[styles.icon, { color: typeColor(item.type, C) }]}>{typeIcon(item.type)}</Text>
               <View style={{ flex: 1 }}>
                 <Text style={[styles.title, !item.is_read && styles.titleUnread]}>{item.title}</Text>
                 {item.body ? <Text style={styles.body}>{item.body}</Text> : null}
@@ -78,22 +80,22 @@ export const NotificationsScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background },
+const makeStyles = (C: Palette) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: C.background },
   actions: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing.md,
   },
-  actionText: { ...Typography.labelSmall, color: Colors.gold, letterSpacing: 1.5 },
+  actionText: { ...Typography.labelSmall, color: C.gold, letterSpacing: 1.5 },
   list: { paddingHorizontal: Spacing.xl, paddingBottom: Spacing.xxl, flexGrow: 1 },
   card: { flexDirection: 'row', alignItems: 'flex-start', gap: Spacing.md, marginBottom: Spacing.sm },
-  cardUnread: { borderColor: Colors.borderStrong },
+  cardUnread: { borderColor: C.borderStrong },
   icon: { fontSize: 20, marginTop: 2 },
-  title: { ...Typography.titleSmall, color: Colors.textSecondary },
-  titleUnread: { color: Colors.textPrimary },
-  body: { ...Typography.bodySmall, color: Colors.textSecondary, marginTop: 2, lineHeight: 18 },
-  date: { ...Typography.caption, color: Colors.textMuted, marginTop: Spacing.xs },
-  dot: { width: 8, height: 8, borderRadius: 4, backgroundColor: Colors.gold, marginTop: 6 },
+  title: { ...Typography.titleSmall, color: C.textSecondary },
+  titleUnread: { color: C.textPrimary },
+  body: { ...Typography.bodySmall, color: C.textSecondary, marginTop: 2, lineHeight: 18 },
+  date: { ...Typography.caption, color: C.textMuted, marginTop: Spacing.xs },
+  dot: { width: 8, height: 8, borderRadius: 4, backgroundColor: C.gold, marginTop: 6 },
 });

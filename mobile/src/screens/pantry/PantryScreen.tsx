@@ -11,12 +11,14 @@ import { usePantryStore } from '../../store/pantry.store';
 import { PantryItemCard } from '../../components/PantryItemCard';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
-import { Colors, Radius, Spacing, Typography } from '../../theme';
+import { Radius, Spacing, Typography, useColors, useThemedStyles, type Palette } from '../../theme';
 
 const TABS = ['All', 'Active', 'Expiring', 'Consumed'] as const;
 type Tab = typeof TABS[number];
 
 export const PantryScreen = ({ navigation }: any) => {
+  const C = useColors();
+  const styles = useThemedStyles(makeStyles);
   const { items, isLoading, fetchItems } = usePantryStore();
   const [activeTab, setActiveTab] = useState<Tab>('Active');
   const [search, setSearch] = useState('');
@@ -52,7 +54,7 @@ export const PantryScreen = ({ navigation }: any) => {
         <TextInput
           style={styles.search}
           placeholder="Search items..."
-          placeholderTextColor={Colors.textMuted}
+          placeholderTextColor={C.textMuted}
           value={search}
           onChangeText={setSearch}
         />
@@ -110,21 +112,21 @@ export const PantryScreen = ({ navigation }: any) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background },
+const makeStyles = (C: Palette) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: C.background },
   searchRow: {
     paddingHorizontal: Spacing.xl,
     paddingTop: Spacing.md,
     paddingBottom: Spacing.sm,
   },
   search: {
-    backgroundColor: Colors.surface,
+    backgroundColor: C.surface,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: C.border,
     borderRadius: Radius.md,
     paddingHorizontal: Spacing.md,
     height: 44,
-    color: Colors.textPrimary,
+    color: C.textPrimary,
     ...Typography.bodyMedium,
   },
   tabs: {
@@ -138,18 +140,18 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.xs,
     borderRadius: Radius.full,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: C.border,
   },
   tabActive: {
-    backgroundColor: Colors.goldDim,
-    borderColor: Colors.gold,
+    backgroundColor: C.goldDim,
+    borderColor: C.gold,
   },
   tabText: {
     ...Typography.labelSmall,
-    color: Colors.textSecondary,
+    color: C.textSecondary,
   },
   tabTextActive: {
-    color: Colors.gold,
+    color: C.gold,
   },
   list: {
     paddingHorizontal: Spacing.xl,
@@ -163,10 +165,10 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: Colors.gold,
+    backgroundColor: C.gold,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: Colors.gold,
+    shadowColor: C.gold,
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.4,
     shadowRadius: 12,
@@ -174,7 +176,7 @@ const styles = StyleSheet.create({
   },
   fabIcon: {
     fontSize: 28,
-    color: Colors.onPrimary,
+    color: C.onPrimary,
     fontWeight: '300',
     lineHeight: 32,
   },

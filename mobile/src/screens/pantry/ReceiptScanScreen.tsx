@@ -8,13 +8,15 @@ import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { FoodImage } from '../../components/FoodImage';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
-import { Colors, Radius, Spacing, Typography } from '../../theme';
+import { Radius, Spacing, Typography, useColors, useThemedStyles, type Palette } from '../../theme';
 import { formatCurrency, toNumber } from '../../utils/format';
 
 type Phase = 'idle' | 'parsing' | 'review' | 'adding' | 'done';
 type Line = ReceiptLine & { include: boolean; key: string };
 
 export const ReceiptScanScreen = ({ navigation }: any) => {
+  const C = useColors();
+  const styles = useThemedStyles(makeStyles);
   const { fetchItems } = usePantryStore();
   const [phase, setPhase] = useState<Phase>('idle');
   const [lines, setLines] = useState<Line[]>([]);
@@ -158,40 +160,43 @@ export const ReceiptScanScreen = ({ navigation }: any) => {
   );
 };
 
-const KeyNeeded = ({ navigation }: any) => (
-  <View style={styles.centered}>
-    <Text style={styles.bigEmoji}>🔑</Text>
-    <Text style={styles.title}>AI key needed</Text>
-    <Text style={styles.message}>
-      Reading receipts uses Gemini AI. Add a free key (GEMINI_API_KEY) to the backend to turn this on. Until then you
-      can add items by hand or by barcode.
-    </Text>
-    <Button label="Add manually" onPress={() => navigation.navigate('AddItem')} />
-    <Pressable onPress={() => navigation.navigate('Scan')} style={styles.linkBtn}>
-      <Text style={styles.link}>Scan a barcode instead</Text>
-    </Pressable>
-  </View>
-);
+const KeyNeeded = ({ navigation }: any) => {
+  const styles = useThemedStyles(makeStyles);
+  return (
+    <View style={styles.centered}>
+      <Text style={styles.bigEmoji}>🔑</Text>
+      <Text style={styles.title}>AI key needed</Text>
+      <Text style={styles.message}>
+        Reading receipts uses Gemini AI. Add a free key (GEMINI_API_KEY) to the backend to turn this on. Until then you
+        can add items by hand or by barcode.
+      </Text>
+      <Button label="Add manually" onPress={() => navigation.navigate('AddItem')} />
+      <Pressable onPress={() => navigation.navigate('Scan')} style={styles.linkBtn}>
+        <Text style={styles.link}>Scan a barcode instead</Text>
+      </Pressable>
+    </View>
+  );
+};
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background },
-  centered: { flex: 1, backgroundColor: Colors.background, alignItems: 'center', justifyContent: 'center', padding: Spacing.xl, gap: Spacing.md },
+const makeStyles = (C: Palette) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: C.background },
+  centered: { flex: 1, backgroundColor: C.background, alignItems: 'center', justifyContent: 'center', padding: Spacing.xl, gap: Spacing.md },
   bigEmoji: { fontSize: 48 },
-  title: { ...Typography.displaySmall, color: Colors.textPrimary, textAlign: 'center' },
-  message: { ...Typography.bodyMedium, color: Colors.textSecondary, textAlign: 'center', marginBottom: Spacing.md },
-  error: { ...Typography.bodyMedium, color: Colors.danger, textAlign: 'center', marginTop: Spacing.sm },
+  title: { ...Typography.displaySmall, color: C.textPrimary, textAlign: 'center' },
+  message: { ...Typography.bodyMedium, color: C.textSecondary, textAlign: 'center', marginBottom: Spacing.md },
+  error: { ...Typography.bodyMedium, color: C.danger, textAlign: 'center', marginTop: Spacing.sm },
   list: { padding: Spacing.xl, paddingBottom: 120 },
   reviewHeader: { marginBottom: Spacing.md },
   row: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md, marginBottom: Spacing.sm },
   rowOff: { opacity: 0.5 },
-  name: { ...Typography.titleSmall, color: Colors.textPrimary },
+  name: { ...Typography.titleSmall, color: C.textPrimary },
   nameOff: { textDecorationLine: 'line-through' },
-  meta: { ...Typography.bodySmall, color: Colors.textSecondary, marginTop: 2 },
-  price: { ...Typography.titleSmall, color: Colors.gold },
-  check: { width: 24, height: 24, borderRadius: Radius.sm, borderWidth: 1.5, borderColor: Colors.borderStrong, alignItems: 'center', justifyContent: 'center' },
-  checkOn: { backgroundColor: Colors.gold, borderColor: Colors.gold },
-  checkMark: { color: Colors.onPrimary, fontWeight: '700', fontSize: 14 },
-  footer: { position: 'absolute', left: 0, right: 0, bottom: 0, padding: Spacing.xl, paddingTop: Spacing.md, backgroundColor: Colors.background, borderTopWidth: 1, borderTopColor: Colors.border },
+  meta: { ...Typography.bodySmall, color: C.textSecondary, marginTop: 2 },
+  price: { ...Typography.titleSmall, color: C.gold },
+  check: { width: 24, height: 24, borderRadius: Radius.sm, borderWidth: 1.5, borderColor: C.borderStrong, alignItems: 'center', justifyContent: 'center' },
+  checkOn: { backgroundColor: C.gold, borderColor: C.gold },
+  checkMark: { color: C.onPrimary, fontWeight: '700', fontSize: 14 },
+  footer: { position: 'absolute', left: 0, right: 0, bottom: 0, padding: Spacing.xl, paddingTop: Spacing.md, backgroundColor: C.background, borderTopWidth: 1, borderTopColor: C.border },
   linkBtn: { paddingVertical: Spacing.sm },
-  link: { ...Typography.bodyMedium, color: Colors.gold },
+  link: { ...Typography.bodyMedium, color: C.gold },
 });

@@ -2,9 +2,11 @@ import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { RecipeMatch } from '../../api/recipes';
 import { Card } from '../../components/ui/Card';
-import { Colors, Radius, Spacing, Typography } from '../../theme';
+import { Radius, Spacing, Typography, useColors, useThemedStyles, type Palette } from '../../theme';
 
 export const RecipeDetailScreen = ({ route }: any) => {
+  const C = useColors();
+  const styles = useThemedStyles(makeStyles);
   const { match }: { match: RecipeMatch } = route.params;
   const { recipe, match_percentage, coverage } = match;
   const missing_ingredients = coverage.filter((c) => !c.is_matched).map((c) => c.ingredient_name);
@@ -53,7 +55,7 @@ export const RecipeDetailScreen = ({ route }: any) => {
                 <View
                   style={[
                     styles.ingDot,
-                    { backgroundColor: isMissing ? Colors.warning : Colors.success },
+                    { backgroundColor: isMissing ? C.warning : C.success },
                   ]}
                 />
                 <Text style={[styles.ingName, isMissing && styles.ingMissing]}>
@@ -87,33 +89,36 @@ export const RecipeDetailScreen = ({ route }: any) => {
   );
 };
 
-const MetaChip = ({ label, accent }: { label: string; accent?: boolean }) => (
-  <View style={[metaStyles.chip, accent && metaStyles.accentChip]}>
-    <Text style={[metaStyles.text, accent && metaStyles.accentText]}>{label}</Text>
-  </View>
-);
+const MetaChip = ({ label, accent }: { label: string; accent?: boolean }) => {
+  const metaStyles = useThemedStyles(makeMetaStyles);
+  return (
+    <View style={[metaStyles.chip, accent && metaStyles.accentChip]}>
+      <Text style={[metaStyles.text, accent && metaStyles.accentText]}>{label}</Text>
+    </View>
+  );
+};
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background },
+const makeStyles = (C: Palette) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: C.background },
   scroll: { padding: Spacing.xl },
   header: { marginBottom: Spacing.lg, gap: Spacing.sm },
-  name: { ...Typography.displaySmall, color: Colors.textPrimary },
+  name: { ...Typography.displaySmall, color: C.textPrimary },
   metaRow: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.xs },
   description: {
     ...Typography.bodyMedium,
-    color: Colors.textSecondary,
+    color: C.textSecondary,
     lineHeight: 22,
     marginTop: Spacing.xs,
   },
   tags: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.xs, marginBottom: Spacing.lg },
   tag: {
-    backgroundColor: Colors.goldDim,
+    backgroundColor: C.goldDim,
     borderRadius: Radius.full,
     paddingHorizontal: 10,
     paddingVertical: 3,
   },
-  tagText: { ...Typography.caption, color: Colors.goldLight },
-  sectionTitle: { ...Typography.titleMedium, color: Colors.textPrimary, marginBottom: Spacing.sm },
+  tagText: { ...Typography.caption, color: C.goldLight },
+  sectionTitle: { ...Typography.titleMedium, color: C.textPrimary, marginBottom: Spacing.sm },
   ingredientsCard: { marginBottom: Spacing.lg, gap: 0 },
   ingredientRow: {
     flexDirection: 'row',
@@ -121,42 +126,42 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 10,
   },
-  ingredientBorder: { borderBottomWidth: 1, borderBottomColor: Colors.border },
+  ingredientBorder: { borderBottomWidth: 1, borderBottomColor: C.border },
   ingLeft: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm, flex: 1 },
   ingDot: { width: 6, height: 6, borderRadius: Radius.full },
-  ingName: { ...Typography.bodyMedium, color: Colors.textPrimary, flex: 1 },
-  ingMissing: { color: Colors.warning },
-  ingQuantity: { ...Typography.bodySmall, color: Colors.textSecondary },
+  ingName: { ...Typography.bodyMedium, color: C.textPrimary, flex: 1 },
+  ingMissing: { color: C.warning },
+  ingQuantity: { ...Typography.bodySmall, color: C.textSecondary },
   missingBox: {
-    backgroundColor: Colors.warningDim,
+    backgroundColor: C.warningDim,
     borderWidth: 1,
-    borderColor: Colors.warning,
+    borderColor: C.warning,
     borderRadius: Radius.lg,
     padding: Spacing.md,
     gap: 4,
   },
-  missingTitle: { ...Typography.labelLarge, color: Colors.warning, marginBottom: 4 },
-  missingItem: { ...Typography.bodyMedium, color: Colors.textPrimary },
+  missingTitle: { ...Typography.labelLarge, color: C.warning, marginBottom: 4 },
+  missingItem: { ...Typography.bodyMedium, color: C.textPrimary },
   completeBox: {
-    backgroundColor: Colors.successDim,
+    backgroundColor: C.successDim,
     borderWidth: 1,
-    borderColor: Colors.success,
+    borderColor: C.success,
     borderRadius: Radius.lg,
     padding: Spacing.md,
     alignItems: 'center',
   },
-  completeText: { ...Typography.labelLarge, color: Colors.success, letterSpacing: 0.5 },
+  completeText: { ...Typography.labelLarge, color: C.success, letterSpacing: 0.5 },
 });
 
-const metaStyles = StyleSheet.create({
+const makeMetaStyles = (C: Palette) => StyleSheet.create({
   chip: {
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: Radius.full,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: C.border,
   },
-  accentChip: { borderColor: Colors.gold, backgroundColor: Colors.goldDim },
-  text: { ...Typography.labelSmall, color: Colors.textSecondary },
-  accentText: { color: Colors.gold },
+  accentChip: { borderColor: C.gold, backgroundColor: C.goldDim },
+  text: { ...Typography.labelSmall, color: C.textSecondary },
+  accentText: { color: C.gold },
 });

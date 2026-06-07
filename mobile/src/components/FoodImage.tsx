@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Image, StyleSheet, Text, View, ViewStyle } from 'react-native';
-import { Colors, Radius } from '../theme';
+import { Radius, useColors, useThemedStyles, type Palette } from '../theme';
 import { categoryImage, foodEmoji } from '../utils/food';
 
 interface FoodImageProps {
@@ -25,6 +25,8 @@ export const FoodImage: React.FC<FoodImageProps> = ({
   style,
   emojiFallbackOnly = false,
 }) => {
+  const C = useColors();
+  const styles = useThemedStyles(makeStyles);
   const [failed, setFailed] = useState(false);
 
   const uri =
@@ -48,9 +50,9 @@ export const FoodImage: React.FC<FoodImageProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const makeStyles = (C: Palette) => StyleSheet.create({
   box: {
-    backgroundColor: Colors.goldDim,
+    backgroundColor: C.goldDim,
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',

@@ -7,10 +7,12 @@ import { Input } from '../../components/ui/Input';
 import { Button } from '../../components/ui/Button';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
-import { Colors, Radius, Spacing, Typography } from '../../theme';
+import { Radius, Spacing, Typography, useColors, useThemedStyles, type Palette } from '../../theme';
 import { toNumber } from '../../utils/format';
 
 export const ShoppingListDetailScreen = ({ route, navigation }: any) => {
+  const C = useColors();
+  const styles = useThemedStyles(makeStyles);
   const { listId } = route.params;
   const [list, setList] = useState<ShoppingList | null>(null);
   const [loading, setLoading] = useState(true);
@@ -106,12 +108,12 @@ export const ShoppingListDetailScreen = ({ route, navigation }: any) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background },
+const makeStyles = (C: Palette) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: C.background },
   content: { padding: Spacing.xl, paddingBottom: 100, flexGrow: 1 },
   addRow: { marginBottom: Spacing.md },
   smallRow: { flexDirection: 'row', gap: Spacing.sm },
-  sectionTitle: { ...Typography.overline, color: Colors.gold, marginTop: Spacing.lg, marginBottom: Spacing.sm },
+  sectionTitle: { ...Typography.overline, color: C.gold, marginTop: Spacing.lg, marginBottom: Spacing.sm },
   itemCard: { flexDirection: 'row', alignItems: 'center', marginBottom: Spacing.sm, gap: Spacing.md },
   check: {},
   checkbox: {
@@ -119,14 +121,14 @@ const styles = StyleSheet.create({
     height: 24,
     borderRadius: Radius.sm,
     borderWidth: 1.5,
-    borderColor: Colors.borderStrong,
+    borderColor: C.borderStrong,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  checkboxOn: { backgroundColor: Colors.gold, borderColor: Colors.gold },
-  checkmark: { color: Colors.onPrimary, fontSize: 14, fontWeight: '700' },
-  itemName: { ...Typography.titleSmall, color: Colors.textPrimary },
-  itemDone: { textDecorationLine: 'line-through', color: Colors.textMuted },
-  itemMeta: { ...Typography.bodySmall, color: Colors.textSecondary, marginTop: 2 },
-  remove: { fontSize: 16, color: Colors.textMuted, paddingHorizontal: Spacing.xs },
+  checkboxOn: { backgroundColor: C.gold, borderColor: C.gold },
+  checkmark: { color: C.onPrimary, fontSize: 14, fontWeight: '700' },
+  itemName: { ...Typography.titleSmall, color: C.textPrimary },
+  itemDone: { textDecorationLine: 'line-through', color: C.textMuted },
+  itemMeta: { ...Typography.bodySmall, color: C.textSecondary, marginTop: 2 },
+  remove: { fontSize: 16, color: C.textMuted, paddingHorizontal: Spacing.xs },
 });

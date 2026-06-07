@@ -2,7 +2,7 @@ import React from 'react';
 import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { PantryItem } from '../api/pantry';
-import { Colors, Radius, Spacing, Typography } from '../theme';
+import { Radius, Spacing, Typography, useColors, useThemedStyles, type Palette } from '../theme';
 import { formatCurrency } from '../utils/format';
 import { ExpiryBadge } from './ExpiryBadge';
 import { FoodImage } from './FoodImage';
@@ -14,6 +14,8 @@ interface PantryItemCardProps {
 }
 
 export const PantryItemCard: React.FC<PantryItemCardProps> = ({ item, onPress }) => {
+  const C = useColors();
+  const styles = useThemedStyles(makeStyles);
   const { consumeItem, wasteItem } = usePantryStore();
 
   const handleLongPress = () => {
@@ -63,18 +65,18 @@ export const PantryItemCard: React.FC<PantryItemCardProps> = ({ item, onPress })
   );
 };
 
-const styles = StyleSheet.create({
+const makeStyles = (C: Palette) => StyleSheet.create({
   card: {
-    backgroundColor: Colors.surface,
+    backgroundColor: C.surface,
     borderRadius: Radius.lg,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: C.border,
     marginBottom: Spacing.sm,
     flexDirection: 'row',
     overflow: 'hidden',
   },
   urgentCard: {
-    borderColor: `${Colors.warning}50`,
+    borderColor: `${C.warning}50`,
   },
   content: {
     flex: 1,
@@ -89,7 +91,7 @@ const styles = StyleSheet.create({
   },
   name: {
     ...Typography.titleMedium,
-    color: Colors.textPrimary,
+    color: C.textPrimary,
     flex: 1,
   },
   meta: {
@@ -99,21 +101,21 @@ const styles = StyleSheet.create({
   },
   quantity: {
     ...Typography.bodySmall,
-    color: Colors.textSecondary,
+    color: C.textSecondary,
   },
   categoryChip: {
-    backgroundColor: Colors.goldDim,
+    backgroundColor: C.goldDim,
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: Radius.full,
   },
   categoryText: {
     ...Typography.caption,
-    color: Colors.goldLight,
+    color: C.goldLight,
     letterSpacing: 0.5,
   },
   price: {
     ...Typography.bodySmall,
-    color: Colors.textMuted,
+    color: C.textMuted,
   },
 });

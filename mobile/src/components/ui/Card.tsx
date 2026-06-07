@@ -1,6 +1,6 @@
 import React from 'react';
 import { Pressable, StyleSheet, View, ViewStyle } from 'react-native';
-import { Colors, Radius, Shadow } from '../../theme';
+import { Radius, Shadow, useColors, useThemedStyles, type Palette } from '../../theme';
 
 interface CardProps {
   children: React.ReactNode;
@@ -10,6 +10,8 @@ interface CardProps {
 }
 
 export const Card: React.FC<CardProps> = ({ children, style, onPress, gold = false }) => {
+  const C = useColors();
+  const styles = useThemedStyles(makeStyles);
   const content = (
     <View
       style={[
@@ -36,17 +38,17 @@ export const Card: React.FC<CardProps> = ({ children, style, onPress, gold = fal
   return content;
 };
 
-const styles = StyleSheet.create({
+const makeStyles = (C: Palette) => StyleSheet.create({
   card: {
-    backgroundColor: Colors.surface,
+    backgroundColor: C.surface,
     borderRadius: Radius.lg,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: C.border,
     padding: 16,
     ...Shadow.subtle,
   },
   goldCard: {
-    borderColor: Colors.borderStrong,
+    borderColor: C.borderStrong,
     ...Shadow.gold,
   },
 });
