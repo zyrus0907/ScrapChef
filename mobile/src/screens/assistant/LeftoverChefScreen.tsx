@@ -22,7 +22,10 @@ export const LeftoverChefScreen = () => {
     setError(null);
     try {
       const { data } = await assistantApi.leftoverChef({
-        expiring_only: expiringOnly,
+        // Always consider the whole pantry; the toggle just prioritises
+        // soon-to-expire items (filtering to only-expiring could return nothing).
+        expiring_only: false,
+        prioritise_expiring: expiringOnly,
         max_recipes: 3,
       });
       setRecipes(data.recipes);

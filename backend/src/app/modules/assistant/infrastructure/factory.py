@@ -11,6 +11,18 @@ def build_recipe_generator() -> AbstractRecipeGenerator:
     """
     settings = get_settings()
 
+    # Prefer Gemini when a key is present (free tier) — same key that powers
+    # receipt/recipe parsing.
+    if settings.GEMINI_API_KEY:
+        from app.modules.assistant.infrastructure.gemini_client import GeminiClient
+        from app.modules.assistant.infrastructure.gemini_generator import (
+            GeminiRecipeGenerator,
+        )
+
+        return GeminiRecipeGenerator(
+            GeminiClient(api_key=settings.GEMINI_API_KEY, model=settings.GEMINI_MODEL)
+        )
+
     if settings.LLM_PROVIDER == "claude" and settings.LLM_API_KEY:
         # Imported here so a missing `anthropic` install can't break startup.
         from app.modules.assistant.infrastructure.claude_generator import (
