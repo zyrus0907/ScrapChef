@@ -4,18 +4,41 @@ import { usePantryStore } from '../../store/pantry.store';
 import { pantryApi, PantryItem } from '../../api/pantry';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
+import { Input } from '../../components/ui/Input';
 import { ExpiryBadge } from '../../components/ExpiryBadge';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { Spacing, Typography, useColors, useThemedStyles, type Palette } from '../../theme';
-import { formatDate, formatCurrency } from '../../utils/format';
+import { formatDate, formatCurrency, toNumber } from '../../utils/format';
 
 export const ItemDetailScreen = ({ route, navigation }: any) => {
   const C = useColors();
   const styles = useThemedStyles(makeStyles);
   const { itemId } = route.params;
-  const { consumeItem, wasteItem, deleteItem } = usePantryStore();
+  const { consumeItem, wasteItem, deleteItem, fetchItems } = usePantryStore();
   const [item, setItem] = useState<PantryItem | null>(null);
   const [loading, setLoading] = useState(true);
+  const [amount, setAmount] = useState('');
+
+  const useSome = async () => {
+    if (!item) return;
+    const amt = parseFloat(amount);
+    if (isNaN(amt) || amt <= 0) {
+      Alert.alert('Invalid', 'Enter an amount greater than 0.');
+      return;
+    }
+    try {
+      const { data } = await pantryApi.consume(item.id, amt);
+      await fetchItems();
+      if (data.status !== 'active') {
+        navigation.goBack();
+      } else {
+        setItem(data);
+        setAmount('');
+      }
+    } catch {
+      Alert.alert('Error', 'Could not update the item.');
+    }
+  };
 
   useEffect(() => {
     pantryApi.get(itemId).then(({ data }) => {
@@ -80,6 +103,26 @@ export const ItemDetailScreen = ({ route, navigation }: any) => {
         {item.notes ? <DetailRow label="Notes" value={item.notes} /> : null}
         <DetailRow label="Added" value={formatDate(item.created_at)} />
       </Card>
+
+      {isActive ? (
+        <Card style={styles.useCard}>
+          <Text style={styles.useTitle}>Use some</Text>
+          <Text style={styles.useSub}>
+            {toNumber(item.quantity)} {item.unit} left
+          </Text>
+          <View style={styles.useRow}>
+            <Input
+              label="Amount used"
+              value={amount}
+              onChangeText={setAmount}
+              keyboardType="decimal-pad"
+              placeholder={`e.g. ${toNumber(item.quantity) / 2}`}
+              containerStyle={styles.useInput}
+            />
+            <Button label="Use" onPress={useSome} fullWidth={false} style={styles.useBtn} />
+          </View>
+        </Card>
+      ) : null}
 
       {isActive ? (
         <View style={styles.actions}>
@@ -157,6 +200,12 @@ const makeStyles = (C: Palette) => StyleSheet.create({
   },
   actionBtn: { flex: 1 },
   deleteBtn: { marginTop: Spacing.sm },
+  useCard: { marginBottom: Spacing.md },
+  useTitle: { ...Typography.titleMedium, color: C.textPrimary },
+  useSub: { ...Typography.bodySmall, color: C.textSecondary, marginBottom: Spacing.sm },
+  useRow: { flexDirection: 'row', gap: Spacing.sm, alignItems: 'flex-end' },
+  useInput: { flex: 1, marginBottom: 0 },
+  useBtn: { marginBottom: 0 },
 });
 
 const makeDetailStyles = (C: Palette) => StyleSheet.create({

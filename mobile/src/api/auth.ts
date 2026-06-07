@@ -20,4 +20,8 @@ export const authApi = {
     client.post<AuthResponse>('/auth/register', { email, password, display_name }),
   me: () => client.get<UserProfile>('/auth/me'),
   logout: (refresh_token: string) => client.post('/auth/logout', { refresh_token }),
+  updateProfile: (display_name: string) =>
+    client.patch<UserProfile>('/auth/me', { display_name }),
+  changePassword: (current_password: string, new_password: string) =>
+    client.post('/auth/change-password', { current_password, new_password }),
 };

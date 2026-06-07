@@ -5,7 +5,10 @@ import { useAuthStore } from '../../store/auth.store';
 import { useNotificationsStore } from '../../store/notifications.store';
 import { DIETARY_OPTIONS, usePrefsStore } from '../../store/prefs.store';
 import client from '../../api/client';
+import { authApi } from '../../api/auth';
 import { Card } from '../../components/ui/Card';
+import { Button } from '../../components/ui/Button';
+import { Input } from '../../components/ui/Input';
 import {
   ACCENTS,
   Radius,
@@ -28,7 +31,47 @@ export const SettingsScreen = () => {
   const C = useColors();
   const styles = useThemedStyles(makeStyles);
   const { mode, setMode, accent, setAccent } = useTheme();
-  const { user, logout } = useAuthStore();
+  const { user, logout, setUser } = useAuthStore();
+  const [editingName, setEditingName] = useState(false);
+  const [nameDraft, setNameDraft] = useState('');
+  const [savingName, setSavingName] = useState(false);
+  const [pwOpen, setPwOpen] = useState(false);
+  const [curPw, setCurPw] = useState('');
+  const [newPw, setNewPw] = useState('');
+  const [savingPw, setSavingPw] = useState(false);
+
+  const saveName = async () => {
+    if (!nameDraft.trim()) return;
+    setSavingName(true);
+    try {
+      const { data } = await authApi.updateProfile(nameDraft.trim());
+      setUser(data);
+      setEditingName(false);
+    } catch {
+      Alert.alert('Error', 'Could not update your name.');
+    } finally {
+      setSavingName(false);
+    }
+  };
+
+  const savePassword = async () => {
+    if (newPw.length < 8) {
+      Alert.alert('Too short', 'New password must be at least 8 characters.');
+      return;
+    }
+    setSavingPw(true);
+    try {
+      await authApi.changePassword(curPw, newPw);
+      Alert.alert('Done', 'Your password has been changed.');
+      setCurPw('');
+      setNewPw('');
+      setPwOpen(false);
+    } catch (e: any) {
+      Alert.alert('Error', e.response?.data?.error?.message ?? 'Could not change password.');
+    } finally {
+      setSavingPw(false);
+    }
+  };
   const { scan } = useNotificationsStore();
   const { dietary, loaded, load, toggle } = usePrefsStore();
   const [conn, setConn] = useState<'idle' | 'checking' | 'ok' | 'fail'>('idle');
@@ -126,9 +169,42 @@ export const SettingsScreen = () => {
       {/* Account */}
       <Text style={styles.section}>ACCOUNT</Text>
       <Card style={styles.card}>
-        <Row label="Name" value={user?.display_name ?? '—'} />
+        {editingName ? (
+          <View style={styles.editRow}>
+            <Input
+              label="Display name"
+              value={nameDraft}
+              onChangeText={setNameDraft}
+              containerStyle={styles.editInput}
+            />
+            <Button label="Save" onPress={saveName} loading={savingName} fullWidth={false} style={styles.editBtn} />
+          </View>
+        ) : (
+          <Pressable
+            style={styles.row}
+            onPress={() => {
+              setNameDraft(user?.display_name ?? '');
+              setEditingName(true);
+            }}
+          >
+            <Text style={styles.rowLabel}>Name</Text>
+            <Text style={styles.rowValue}>{user?.display_name ?? '—'}  ✎</Text>
+          </Pressable>
+        )}
         <View style={styles.divider} />
         <Row label="Email" value={user?.email ?? '—'} />
+        <View style={styles.divider} />
+        <Pressable style={styles.actionRow} onPress={() => setPwOpen((o) => !o)}>
+          <Text style={styles.actionLabel}>Change password</Text>
+          <Text style={styles.chevron}>{pwOpen ? '▾' : '›'}</Text>
+        </Pressable>
+        {pwOpen ? (
+          <View style={styles.pwForm}>
+            <Input label="Current password" value={curPw} onChangeText={setCurPw} secureTextEntry />
+            <Input label="New password (min 8)" value={newPw} onChangeText={setNewPw} secureTextEntry />
+            <Button label="Update password" onPress={savePassword} loading={savingPw} />
+          </View>
+        ) : null}
       </Card>
 
       {/* Tools */}
@@ -237,6 +313,10 @@ const makeStyles = (C: Palette) =>
     },
     dietChipActive: { backgroundColor: C.goldDim, borderColor: C.gold },
     dietChipText: { ...Typography.labelSmall, color: C.textSecondary },
+    editRow: { flexDirection: 'row', gap: Spacing.sm, alignItems: 'flex-end', paddingVertical: 8 },
+    editInput: { flex: 1, marginBottom: 0 },
+    editBtn: { marginBottom: 0 },
+    pwForm: { paddingTop: Spacing.md, gap: 0 },
     actionRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 14 },
     actionLabel: { ...Typography.bodyMedium, color: C.textPrimary },
     chevron: { fontSize: 22, color: C.textMuted },

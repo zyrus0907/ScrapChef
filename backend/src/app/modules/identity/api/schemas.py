@@ -33,3 +33,12 @@ class MeResponse(BaseModel):
     email: str
     display_name: str
     is_active: bool
+
+
+class UpdateProfileRequest(BaseModel):
+    display_name: str = Field(min_length=1, max_length=100, strip_whitespace=True)
+
+
+class ChangePasswordRequest(BaseModel):
+    current_password: str
+    new_password: str = Field(min_length=8, max_length=128)

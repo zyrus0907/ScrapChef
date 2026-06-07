@@ -4,18 +4,24 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.infrastructure.database.session import get_db_session
 from app.modules.identity.api.deps import get_current_user
 from app.modules.identity.api.schemas import (
+    ChangePasswordRequest,
     LoginRequest,
     LogoutRequest,
     MeResponse,
     RefreshRequest,
     RegisterRequest,
     TokenResponse,
+    UpdateProfileRequest,
 )
 from app.modules.identity.application.dtos import LoginCommand, RegisterCommand
 from app.modules.identity.application.use_cases.login import LoginUser
 from app.modules.identity.application.use_cases.logout import LogoutUser
 from app.modules.identity.application.use_cases.refresh_token import RefreshAccessToken
 from app.modules.identity.application.use_cases.register import RegisterUser
+from app.modules.identity.application.use_cases.update_profile import (
+    ChangePassword,
+    UpdateProfile,
+)
 from app.modules.identity.infrastructure.models import UserModel
 from app.modules.identity.infrastructure.household_repository import SqlHouseholdRepository
 from app.modules.identity.infrastructure.token_repository import SqlTokenRepository
@@ -94,4 +100,32 @@ async def me(current_user: UserModel = Depends(get_current_user)) -> MeResponse:
         email=current_user.email,
         display_name=current_user.display_name,
         is_active=current_user.is_active,
+    )
+
+
+@router.patch("/me", response_model=MeResponse)
+async def update_me(
+    body: UpdateProfileRequest,
+    current_user: UserModel = Depends(get_current_user),
+    session: AsyncSession = Depends(get_db_session),
+) -> MeResponse:
+    user = await UpdateProfile(SqlUserRepository(session)).execute(
+        current_user.id, body.display_name
+    )
+    return MeResponse(
+        id=user.id,
+        email=str(user.email),
+        display_name=user.display_name,
+        is_active=user.is_active,
+    )
+
+
+@router.post("/change-password", status_code=204)
+async def change_password(
+    body: ChangePasswordRequest,
+    current_user: UserModel = Depends(get_current_user),
+    session: AsyncSession = Depends(get_db_session),
+) -> None:
+    await ChangePassword(SqlUserRepository(session)).execute(
+        current_user.id, body.current_password, body.new_password
     )

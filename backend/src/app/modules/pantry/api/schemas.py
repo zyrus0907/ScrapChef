@@ -6,6 +6,10 @@ from uuid import UUID
 from pydantic import BaseModel, Field
 
 
+class ConsumeRequest(BaseModel):
+    quantity: Optional[Decimal] = Field(None, gt=0)
+
+
 class CookRequest(BaseModel):
     ingredient_names: list[str] = Field(default_factory=list)
 

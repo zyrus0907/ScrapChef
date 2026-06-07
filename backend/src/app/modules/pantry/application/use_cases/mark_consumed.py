@@ -1,4 +1,6 @@
 from datetime import datetime, timezone
+from decimal import Decimal
+from typing import Optional
 from uuid import UUID
 
 from app.core.exceptions import DomainError, NotFoundError
@@ -10,13 +12,22 @@ class MarkItemConsumed:
     def __init__(self, repo: AbstractPantryRepository) -> None:
         self._repo = repo
 
-    async def execute(self, item_id: UUID, household_id: UUID) -> PantryItem:
+    async def execute(
+        self, item_id: UUID, household_id: UUID, quantity: Optional[Decimal] = None
+    ) -> PantryItem:
         item = await self._repo.get_by_id(item_id, household_id)
         if item is None:
             raise NotFoundError("Pantry item not found")
         if item.status != PantryItemStatus.ACTIVE:
             raise DomainError(f"Cannot consume item with status '{item.status.value}'")
-        item.status = PantryItemStatus.CONSUMED
+
+        # Partial consume: a positive amount smaller than what's left just
+        # decrements the quantity and keeps the item active. Otherwise (no
+        # amount, or >= remaining) the whole item is consumed.
+        if quantity is not None and quantity > 0 and quantity < item.quantity:
+            item.quantity = item.quantity - quantity
+        else:
+            item.status = PantryItemStatus.CONSUMED
         item.updated_at = datetime.now(timezone.utc)
         await self._repo.save(item)
         return item

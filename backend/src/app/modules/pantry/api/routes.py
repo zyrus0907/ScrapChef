@@ -10,6 +10,7 @@ from app.modules.identity.infrastructure.models import HouseholdModel, UserModel
 from app.modules.pantry.api.deps import get_current_household
 from app.modules.pantry.api.schemas import (
     AddItemRequest,
+    ConsumeRequest,
     CookRequest,
     CookResponse,
     PantryItemResponse,
@@ -143,10 +144,12 @@ async def delete_item(
 @router.post("/items/{item_id}/consume", response_model=PantryItemResponse)
 async def consume_item(
     item_id: UUID,
+    body: ConsumeRequest | None = None,
     household: HouseholdModel = Depends(get_current_household),
     session: AsyncSession = Depends(get_db_session),
 ) -> PantryItemResponse:
-    item = await MarkItemConsumed(_repo(session)).execute(item_id, household.id)
+    quantity = body.quantity if body else None
+    item = await MarkItemConsumed(_repo(session)).execute(item_id, household.id, quantity)
     return PantryItemResponse.from_domain(item)
 
 
