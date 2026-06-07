@@ -6,6 +6,7 @@ import { useNotificationsStore } from '../../store/notifications.store';
 import client from '../../api/client';
 import { Card } from '../../components/ui/Card';
 import {
+  ACCENTS,
   Radius,
   Spacing,
   Typography,
@@ -25,7 +26,7 @@ const THEME_OPTIONS: { mode: ThemeMode; label: string; icon: string }[] = [
 export const SettingsScreen = () => {
   const C = useColors();
   const styles = useThemedStyles(makeStyles);
-  const { mode, setMode } = useTheme();
+  const { mode, setMode, accent, setAccent } = useTheme();
   const { user, logout } = useAuthStore();
   const { scan } = useNotificationsStore();
   const [conn, setConn] = useState<'idle' | 'checking' | 'ok' | 'fail'>('idle');
@@ -68,6 +69,28 @@ export const SettingsScreen = () => {
               >
                 <Text style={[styles.segIcon, active && styles.segTextActive]}>{opt.icon}</Text>
                 <Text style={[styles.segText, active && styles.segTextActive]}>{opt.label}</Text>
+              </Pressable>
+            );
+          })}
+        </View>
+
+        <View style={styles.divider} />
+        <Text style={[styles.rowLabel, { marginTop: Spacing.md }]}>Accent color</Text>
+        <View style={styles.swatches}>
+          {ACCENTS.map((a) => {
+            const active = accent === a.key;
+            return (
+              <Pressable key={a.key} onPress={() => setAccent(a.key)} style={styles.swatchWrap}>
+                <View
+                  style={[
+                    styles.swatch,
+                    { backgroundColor: a.swatch },
+                    active && styles.swatchActive,
+                  ]}
+                >
+                  {active ? <Text style={styles.swatchCheck}>✓</Text> : null}
+                </View>
+                <Text style={[styles.swatchLabel, active && styles.segTextActive]}>{a.label}</Text>
               </Pressable>
             );
           })}
@@ -164,6 +187,20 @@ const makeStyles = (C: Palette) =>
     segIcon: { fontSize: 18, color: C.textSecondary },
     segText: { ...Typography.labelSmall, color: C.textSecondary },
     segTextActive: { color: C.goldLight },
+    swatches: { flexDirection: 'row', gap: Spacing.md, marginTop: Spacing.md, flexWrap: 'wrap' },
+    swatchWrap: { alignItems: 'center', gap: 6 },
+    swatch: {
+      width: 36,
+      height: 36,
+      borderRadius: Radius.full,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderWidth: 2,
+      borderColor: 'transparent',
+    },
+    swatchActive: { borderColor: C.textPrimary },
+    swatchCheck: { color: '#FFFFFF', fontWeight: '800', fontSize: 16 },
+    swatchLabel: { ...Typography.caption, color: C.textMuted },
     actionRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 14 },
     actionLabel: { ...Typography.bodyMedium, color: C.textPrimary },
     chevron: { fontSize: 22, color: C.textMuted },

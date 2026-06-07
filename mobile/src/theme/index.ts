@@ -1,5 +1,5 @@
-export { Colors, lightColors, darkColors } from './colors';
-export type { Palette, ColorKey } from './colors';
+export { Colors, lightColors, darkColors, ACCENTS, buildPalette } from './colors';
+export type { Palette, ColorKey, AccentKey } from './colors';
 export { Typography } from './typography';
 export {
   ThemeProvider,
