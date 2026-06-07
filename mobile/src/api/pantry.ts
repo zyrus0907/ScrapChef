@@ -3,7 +3,8 @@ import client from './client';
 export interface PantryItem {
   id: string;
   name: string;
-  quantity: number;
+  // Decimal fields are serialized as strings by the API — coerce with toNumber().
+  quantity: number | string;
   unit: string;
   category: string;
   status: 'active' | 'consumed' | 'wasted';
@@ -11,9 +12,9 @@ export interface PantryItem {
   image_url?: string;
   expiry_date?: string;
   opened_date?: string;
-  purchase_price?: number;
+  purchase_price?: number | string;
   purchase_date?: string;
-  quantity_purchased?: number;
+  quantity_purchased?: number | string;
   days_until_expiry?: number;
   is_expired: boolean;
   notes?: string;

@@ -3,6 +3,7 @@ import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { PantryItem } from '../api/pantry';
 import { Colors, Radius, Spacing, Typography } from '../theme';
+import { formatCurrency } from '../utils/format';
 import { ExpiryBadge } from './ExpiryBadge';
 import { FoodImage } from './FoodImage';
 import { usePantryStore } from '../store/pantry.store';
@@ -55,7 +56,7 @@ export const PantryItemCard: React.FC<PantryItemCardProps> = ({ item, onPress })
           ) : null}
         </View>
         {item.purchase_price ? (
-          <Text style={styles.price}>${item.purchase_price.toFixed(2)}</Text>
+          <Text style={styles.price}>{formatCurrency(item.purchase_price)}</Text>
         ) : null}
       </View>
     </Pressable>
