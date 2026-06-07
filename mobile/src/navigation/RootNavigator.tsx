@@ -60,13 +60,9 @@ export const RootNavigator = () => {
 
   if (isDesktop && isAuthenticated) {
     return (
-      <View style={[styles.desktopRow, { backgroundColor: C.page }]}>
+      <View style={styles.desktopRow}>
         <Sidebar active={activeTab} />
-        <View style={[styles.contentOuter, { backgroundColor: C.page }]}>
-          <View style={[styles.contentInner, { backgroundColor: C.background, borderColor: C.border }]}>
-            {content}
-          </View>
-        </View>
+        <View style={[styles.content, { backgroundColor: C.background }]}>{content}</View>
       </View>
     );
   }
@@ -76,12 +72,6 @@ export const RootNavigator = () => {
 
 const styles = StyleSheet.create({
   desktopRow: { flex: 1, flexDirection: 'row' },
-  contentOuter: { flex: 1, alignItems: 'center' },
-  contentInner: {
-    flex: 1,
-    width: '100%',
-    maxWidth: 980,
-    borderLeftWidth: 1,
-    borderRightWidth: 1,
-  },
+  // Content fills all remaining width, flush against the sidebar — no gaps.
+  content: { flex: 1 },
 });
