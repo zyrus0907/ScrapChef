@@ -12,6 +12,7 @@ import { RecipeCard } from '../../components/RecipeCard';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { Radius, Spacing, Typography, useColors, useThemedStyles, type Palette } from '../../theme';
+import { useColumns } from '../../utils/responsive';
 
 const MODES = [
   { key: 'strict', label: 'Perfect Match', icon: '✦', sub: 'All ingredients on hand' },
@@ -25,6 +26,7 @@ type ModeKey = typeof MODES[number]['key'];
 export const RecipesScreen = ({ navigation }: any) => {
   const C = useColors();
   const styles = useThemedStyles(makeStyles);
+  const columns = useColumns();
   const [activeMode, setActiveMode] = useState<ModeKey>('strict');
   const [results, setResults] = useState<RecipeMatch[]>([]);
   const [loading, setLoading] = useState(false);
@@ -85,12 +87,17 @@ export const RecipesScreen = ({ navigation }: any) => {
       ) : (
         <FlatList
           data={results}
+          key={columns}
+          numColumns={columns}
+          columnWrapperStyle={columns > 1 ? styles.gridRow : undefined}
           keyExtractor={(item) => item.recipe.id}
           renderItem={({ item }) => (
-            <RecipeCard
-              match={item}
-              onPress={() => navigation.navigate('RecipeDetail', { match: item })}
-            />
+            <View style={columns > 1 ? styles.gridCell : undefined}>
+              <RecipeCard
+                match={item}
+                onPress={() => navigation.navigate('RecipeDetail', { match: item })}
+              />
+            </View>
           )}
           contentContainerStyle={styles.list}
           ListEmptyComponent={
@@ -163,4 +170,6 @@ const makeStyles = (C: Palette) => StyleSheet.create({
     paddingBottom: Spacing.xxl,
     flexGrow: 1,
   },
+  gridRow: { gap: Spacing.md },
+  gridCell: { flex: 1 },
 });

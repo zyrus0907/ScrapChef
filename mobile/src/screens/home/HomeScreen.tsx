@@ -6,6 +6,7 @@ import { useAuthStore } from '../../store/auth.store';
 import { PantryItemCard } from '../../components/PantryItemCard';
 import { Card } from '../../components/ui/Card';
 import { Spacing, Typography, useColors, useThemedStyles, type Palette } from '../../theme';
+import { useColumns } from '../../utils/responsive';
 
 const GREETING = () => {
   const h = new Date().getHours();
@@ -135,8 +136,13 @@ const QuickAction = ({
   onPress: () => void;
 }) => {
   const styles = useThemedStyles(makeStyles);
+  const wide = useColumns() > 1;
   return (
-    <Card onPress={onPress} style={styles.quickAction} gold>
+    <Card
+      onPress={onPress}
+      style={StyleSheet.flatten([styles.quickAction, wide && styles.quickActionWide])}
+      gold
+    >
       <Text style={styles.quickIcon}>{icon}</Text>
       <Text style={styles.quickLabel}>{label}</Text>
     </Card>
@@ -239,6 +245,7 @@ const makeStyles = (C: Palette) => StyleSheet.create({
     paddingVertical: Spacing.lg,
     gap: Spacing.sm,
   },
+  quickActionWide: { flexBasis: '18%' },
   quickIcon: {
     fontSize: 22,
     color: C.gold,

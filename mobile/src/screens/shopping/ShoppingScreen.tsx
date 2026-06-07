@@ -9,10 +9,12 @@ import { EmptyState } from '../../components/ui/EmptyState';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { Radius, Spacing, Typography, useColors, useThemedStyles, type Palette } from '../../theme';
 import { toNumber } from '../../utils/format';
+import { useColumns } from '../../utils/responsive';
 
 export const ShoppingScreen = ({ navigation }: any) => {
   const C = useColors();
   const styles = useThemedStyles(makeStyles);
+  const columns = useColumns();
   const { lists, suggestions, isLoading, fetchLists, fetchSuggestions, createList } =
     useShoppingStore();
   const [newName, setNewName] = useState('');
@@ -53,6 +55,9 @@ export const ShoppingScreen = ({ navigation }: any) => {
       style={styles.container}
       contentContainerStyle={styles.content}
       data={lists}
+      key={columns}
+      numColumns={columns}
+      columnWrapperStyle={columns > 1 ? styles.gridRow : undefined}
       keyExtractor={(l) => l.id}
       onRefresh={load}
       refreshing={isLoading}
@@ -103,7 +108,7 @@ export const ShoppingScreen = ({ navigation }: any) => {
       }
       renderItem={({ item }) => (
         <Card
-          style={styles.listCard}
+          style={StyleSheet.flatten([styles.listCard, columns > 1 ? styles.gridCell : null])}
           onPress={() =>
             navigation.navigate('ShoppingListDetail', { listId: item.id, title: item.name })
           }
@@ -145,6 +150,8 @@ const makeStyles = (C: Palette) => StyleSheet.create({
   },
   addBtnText: { ...Typography.labelSmall, color: C.gold },
   listCard: { flexDirection: 'row', alignItems: 'center', marginBottom: Spacing.sm },
+  gridRow: { gap: Spacing.sm },
+  gridCell: { flex: 1 },
   listName: { ...Typography.titleMedium, color: C.textPrimary },
   listMeta: { ...Typography.bodySmall, color: C.textSecondary, marginTop: 2 },
   chevron: { fontSize: 28, color: C.textMuted, fontWeight: '300' },

@@ -12,6 +12,7 @@ import { PantryItemCard } from '../../components/PantryItemCard';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { Radius, Spacing, Typography, useColors, useThemedStyles, type Palette } from '../../theme';
+import { useColumns } from '../../utils/responsive';
 
 const TABS = ['All', 'Active', 'Expiring', 'Consumed'] as const;
 type Tab = typeof TABS[number];
@@ -20,6 +21,7 @@ export const PantryScreen = ({ navigation }: any) => {
   const C = useColors();
   const styles = useThemedStyles(makeStyles);
   const { items, isLoading, fetchItems } = usePantryStore();
+  const columns = useColumns();
   const [activeTab, setActiveTab] = useState<Tab>('Active');
   const [search, setSearch] = useState('');
 
@@ -77,12 +79,17 @@ export const PantryScreen = ({ navigation }: any) => {
 
       <FlatList
         data={filtered}
+        key={columns}
+        numColumns={columns}
+        columnWrapperStyle={columns > 1 ? styles.gridRow : undefined}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <PantryItemCard
-            item={item}
-            onPress={() => navigation.navigate('ItemDetail', { itemId: item.id })}
-          />
+          <View style={columns > 1 ? styles.gridCell : undefined}>
+            <PantryItemCard
+              item={item}
+              onPress={() => navigation.navigate('ItemDetail', { itemId: item.id })}
+            />
+          </View>
         )}
         contentContainerStyle={styles.list}
         ListEmptyComponent={
@@ -158,6 +165,8 @@ const makeStyles = (C: Palette) => StyleSheet.create({
     paddingBottom: 100,
     flexGrow: 1,
   },
+  gridRow: { gap: Spacing.sm },
+  gridCell: { flex: 1 },
   fab: {
     position: 'absolute',
     bottom: Spacing.xl,
