@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { Platform, Text, useWindowDimensions, View } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { HomeScreen } from '../screens/home/HomeScreen';
@@ -149,10 +149,14 @@ const TabIcon = ({ icon, focused }: { icon: string; focused: boolean }) => {
 
 export const AppNavigator = () => {
   const C = useColors();
+  const { width } = useWindowDimensions();
+  // On wide web the left Sidebar replaces the bottom tabs.
+  const hideTabs = Platform.OS === 'web' && width >= 900;
   return (
     <Tab.Navigator
       screenOptions={{
         tabBarStyle: {
+          display: hideTabs ? 'none' : 'flex',
           backgroundColor: C.surface,
           borderTopColor: C.border,
           borderTopWidth: 1,
