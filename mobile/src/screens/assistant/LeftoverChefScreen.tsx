@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { assistantApi, GeneratedRecipe } from '../../api/assistant';
+import { pantryApi } from '../../api/pantry';
+import { usePantryStore } from '../../store/pantry.store';
+import { usePrefsStore } from '../../store/prefs.store';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { EmptyState } from '../../components/ui/EmptyState';
@@ -13,6 +16,8 @@ export const LeftoverChefScreen = () => {
   const C = useColors();
   const styles = useThemedStyles(makeStyles);
   const wide = useColumns() > 1;
+  const { fetchItems } = usePantryStore();
+  const { dietary, loaded, load } = usePrefsStore();
   const [recipes, setRecipes] = useState<GeneratedRecipe[]>([]);
   const [provider, setProvider] = useState<string | null>(null);
   const [considered, setConsidered] = useState(0);
@@ -20,6 +25,25 @@ export const LeftoverChefScreen = () => {
   const [error, setError] = useState<string | null>(null);
   const [expiringOnly, setExpiringOnly] = useState(true);
   const [hasRun, setHasRun] = useState(false);
+
+  const cook = async (r: GeneratedRecipe) => {
+    try {
+      const { data } = await pantryApi.cook(r.ingredients_used);
+      await fetchItems();
+      Alert.alert(
+        'Cooked! 🍳',
+        data.consumed > 0
+          ? `Used up ${data.consumed} pantry item${data.consumed === 1 ? '' : 's'}: ${data.names.join(', ')}.`
+          : 'No matching pantry items were active to use up.'
+      );
+    } catch {
+      Alert.alert('Error', 'Could not update your pantry.');
+    }
+  };
+
+  useEffect(() => {
+    if (!loaded) load();
+  }, [loaded]);
 
   const generate = async () => {
     setLoading(true);
@@ -30,6 +54,7 @@ export const LeftoverChefScreen = () => {
         // soon-to-expire items (filtering to only-expiring could return nothing).
         expiring_only: false,
         prioritise_expiring: expiringOnly,
+        dietary_preferences: dietary,
         max_recipes: 3,
       });
       setRecipes(data.recipes);
@@ -109,6 +134,14 @@ export const LeftoverChefScreen = () => {
               ))}
             </View>
           </View>
+
+          <Button
+            label="Cook this — use up ingredients"
+            onPress={() => cook(r)}
+            variant="outline"
+            size="sm"
+            style={{ marginTop: Spacing.md }}
+          />
         </Card>
       ))}
 

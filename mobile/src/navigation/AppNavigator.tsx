@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { HomeScreen } from '../screens/home/HomeScreen';
 import { PantryScreen } from '../screens/pantry/PantryScreen';
 import { AddItemScreen } from '../screens/pantry/AddItemScreen';
+import { EditItemScreen } from '../screens/pantry/EditItemScreen';
 import { ScanScreen } from '../screens/pantry/ScanScreen';
 import { ReceiptScanScreen } from '../screens/pantry/ReceiptScanScreen';
 import { ItemDetailScreen } from '../screens/pantry/ItemDetailScreen';
@@ -98,6 +99,7 @@ const PantryNavigator = () => {
       <PantryStack.Screen name="AddItem" component={AddItemScreen} options={{ title: 'ADD ITEM', headerTitleStyle: titleSmall }} />
       <PantryStack.Screen name="Scan" component={ScanScreen} options={{ title: 'SCAN BARCODE', headerTitleStyle: titleSmall }} />
       <PantryStack.Screen name="ReceiptScan" component={ReceiptScanScreen} options={{ title: 'SCAN RECEIPT', headerTitleStyle: titleSmall }} />
+      <PantryStack.Screen name="EditItem" component={EditItemScreen} options={{ title: 'EDIT ITEM', headerTitleStyle: titleSmall }} />
       <PantryStack.Screen name="ItemDetail" component={ItemDetailScreen} options={{ title: '' }} />
     </PantryStack.Navigator>
   );

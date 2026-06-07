@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import Constants from 'expo-constants';
 import { useAuthStore } from '../../store/auth.store';
 import { useNotificationsStore } from '../../store/notifications.store';
+import { DIETARY_OPTIONS, usePrefsStore } from '../../store/prefs.store';
 import client from '../../api/client';
 import { Card } from '../../components/ui/Card';
 import {
@@ -29,7 +30,12 @@ export const SettingsScreen = () => {
   const { mode, setMode, accent, setAccent } = useTheme();
   const { user, logout } = useAuthStore();
   const { scan } = useNotificationsStore();
+  const { dietary, loaded, load, toggle } = usePrefsStore();
   const [conn, setConn] = useState<'idle' | 'checking' | 'ok' | 'fail'>('idle');
+
+  useEffect(() => {
+    if (!loaded) load();
+  }, [loaded]);
 
   const checkConnection = async () => {
     setConn('checking');
@@ -91,6 +97,26 @@ export const SettingsScreen = () => {
                   {active ? <Text style={styles.swatchCheck}>✓</Text> : null}
                 </View>
                 <Text style={[styles.swatchLabel, active && styles.segTextActive]}>{a.label}</Text>
+              </Pressable>
+            );
+          })}
+        </View>
+      </Card>
+
+      {/* Dietary preferences */}
+      <Text style={styles.section}>DIETARY PREFERENCES</Text>
+      <Card style={styles.card}>
+        <Text style={styles.rowLabel}>Used when Leftover Chef generates recipes</Text>
+        <View style={styles.chipsRow}>
+          {DIETARY_OPTIONS.map((opt) => {
+            const active = dietary.includes(opt);
+            return (
+              <Pressable
+                key={opt}
+                onPress={() => toggle(opt)}
+                style={[styles.dietChip, active && styles.dietChipActive]}
+              >
+                <Text style={[styles.dietChipText, active && styles.segTextActive]}>{opt}</Text>
               </Pressable>
             );
           })}
@@ -201,6 +227,16 @@ const makeStyles = (C: Palette) =>
     swatchActive: { borderColor: C.textPrimary },
     swatchCheck: { color: '#FFFFFF', fontWeight: '800', fontSize: 16 },
     swatchLabel: { ...Typography.caption, color: C.textMuted },
+    chipsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.xs, marginTop: Spacing.md },
+    dietChip: {
+      paddingHorizontal: Spacing.md,
+      paddingVertical: Spacing.xs,
+      borderRadius: Radius.full,
+      borderWidth: 1,
+      borderColor: C.border,
+    },
+    dietChipActive: { backgroundColor: C.goldDim, borderColor: C.gold },
+    dietChipText: { ...Typography.labelSmall, color: C.textSecondary },
     actionRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 14 },
     actionLabel: { ...Typography.bodyMedium, color: C.textPrimary },
     chevron: { fontSize: 22, color: C.textMuted },

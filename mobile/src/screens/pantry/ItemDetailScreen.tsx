@@ -93,6 +93,12 @@ export const ItemDetailScreen = ({ route, navigation }: any) => {
         </View>
       ) : null}
 
+      <Button
+        label="Edit Item"
+        onPress={() => navigation.navigate('EditItem', { item })}
+        variant="outline"
+        style={styles.deleteBtn}
+      />
       <Button label="Delete Item" onPress={handleDelete} variant="danger" style={styles.deleteBtn} />
     </ScrollView>
   );

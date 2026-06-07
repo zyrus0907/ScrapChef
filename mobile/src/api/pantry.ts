@@ -46,6 +46,8 @@ export const pantryApi = {
     client.get<PantryItem[]>(`/pantry/items/expiring-soon?within_days=${withinDays}`),
   consume: (id: string, quantity?: number) =>
     client.post<PantryItem>(`/pantry/items/${id}/consume`, quantity ? { quantity } : {}),
+  cook: (ingredient_names: string[]) =>
+    client.post<{ consumed: number; names: string[] }>('/pantry/cook', { ingredient_names }),
   waste: (id: string, quantity?: number) =>
     client.post<PantryItem>(`/pantry/items/${id}/waste`, quantity ? { quantity } : {}),
 };

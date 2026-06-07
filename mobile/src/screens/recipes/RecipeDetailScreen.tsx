@@ -1,6 +1,9 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { RecipeMatch } from '../../api/recipes';
+import { pantryApi } from '../../api/pantry';
+import { usePantryStore } from '../../store/pantry.store';
+import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { Radius, Spacing, Typography, useColors, useThemedStyles, type Palette } from '../../theme';
 import { useColumns } from '../../utils/responsive';
@@ -18,6 +21,25 @@ export const RecipeDetailScreen = ({ route }: any) => {
     .split(/\r?\n/)
     .map((s) => s.replace(/^\s*\d+[.)]\s*/, '').trim())
     .filter(Boolean);
+  const { fetchItems } = usePantryStore();
+
+  const cookIt = async () => {
+    const names = coverage
+      .filter((c) => c.is_matched)
+      .map((c) => c.pantry_item_name || c.ingredient_name);
+    try {
+      const { data } = await pantryApi.cook(names);
+      await fetchItems();
+      Alert.alert(
+        'Cooked! 🍳',
+        data.consumed > 0
+          ? `Used up ${data.consumed} pantry item${data.consumed === 1 ? '' : 's'}: ${data.names.join(', ')}.`
+          : 'No matching active pantry items to use up.'
+      );
+    } catch {
+      Alert.alert('Error', 'Could not update your pantry.');
+    }
+  };
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.scroll}>
@@ -34,6 +56,12 @@ export const RecipeDetailScreen = ({ route }: any) => {
           <Text style={styles.description}>{recipe.description}</Text>
         ) : null}
       </View>
+
+      <Button
+        label="Cook this — use up ingredients"
+        onPress={cookIt}
+        style={{ marginBottom: Spacing.lg }}
+      />
 
       {recipe.tags && recipe.tags.length > 0 ? (
         <View style={styles.tags}>

@@ -8,9 +8,16 @@ from app.infrastructure.database.session import get_db_session
 from app.modules.identity.api.deps import get_current_user
 from app.modules.identity.infrastructure.models import HouseholdModel, UserModel
 from app.modules.pantry.api.deps import get_current_household
-from app.modules.pantry.api.schemas import AddItemRequest, PantryItemResponse, UpdateItemRequest
+from app.modules.pantry.api.schemas import (
+    AddItemRequest,
+    CookRequest,
+    CookResponse,
+    PantryItemResponse,
+    UpdateItemRequest,
+)
 from app.modules.pantry.application.dtos import AddItemCommand, UpdateItemCommand
 from app.modules.pantry.application.use_cases.add_item import AddPantryItem
+from app.modules.pantry.application.use_cases.cook_recipe import ConsumeByNames
 from app.modules.pantry.application.use_cases.delete_item import DeletePantryItem
 from app.modules.pantry.application.use_cases.get_inventory import (
     GetExpiringSoon,
@@ -52,6 +59,17 @@ async def add_item(
         )
     )
     return PantryItemResponse.from_domain(item)
+
+
+@router.post("/cook", response_model=CookResponse)
+async def cook(
+    body: CookRequest,
+    household: HouseholdModel = Depends(get_current_household),
+    session: AsyncSession = Depends(get_db_session),
+) -> CookResponse:
+    """Mark the recipe's used pantry items consumed (feeds the savings tracker)."""
+    names = await ConsumeByNames(_repo(session)).execute(household.id, body.ingredient_names)
+    return CookResponse(consumed=len(names), names=names)
 
 
 @router.get("/items/expiring-soon", response_model=list[PantryItemResponse])
