@@ -1,0 +1,48 @@
+# Render Blueprint — provisions the ScrapChef API + a managed Postgres.
+# Deploy: Render dashboard → New → Blueprint → connect this repo. Render reads
+# this file, creates both services, runs migrations on deploy, and starts the API.
+# You only need to paste GEMINI_API_KEY (marked sync:false below).
+
+databases:
+  - name: scrapchef-db
+    plan: free
+    databaseName: pantry
+    user: pantry
+
+services:
+  - type: web
+    name: scrapchef-api
+    runtime: docker
+    plan: free
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    healthCheckPath: /health
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: DEBUG
+        value: "false"
+      - key: JWT_SECRET
+        generateValue: true # Render generates a strong secret
+      - key: GEMINI_API_KEY
+        sync: false # paste your free key in the dashboard
+      - key: POSTGRES_HOST
+        fromDatabase:
+          name: scrapchef-db
+          property: host
+      - key: POSTGRES_PORT
+        fromDatabase:
+          name: scrapchef-db
+          property: port
+      - key: POSTGRES_USER
+        fromDatabase:
+          name: scrapchef-db
+          property: user
+      - key: POSTGRES_PASSWORD
+        fromDatabase:
+          name: scrapchef-db
+          property: password
+      - key: POSTGRES_DB
+        fromDatabase:
+          name: scrapchef-db
+          property: database
