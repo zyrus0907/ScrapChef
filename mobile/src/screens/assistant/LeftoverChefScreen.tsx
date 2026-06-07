@@ -7,10 +7,12 @@ import { Button } from '../../components/ui/Button';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { FoodImage } from '../../components/FoodImage';
 import { Radius, Spacing, Typography, useColors, useThemedStyles, type Palette } from '../../theme';
+import { useColumns } from '../../utils/responsive';
 
 export const LeftoverChefScreen = () => {
   const C = useColors();
   const styles = useThemedStyles(makeStyles);
+  const wide = useColumns() > 1;
   const [recipes, setRecipes] = useState<GeneratedRecipe[]>([]);
   const [provider, setProvider] = useState<string | null>(null);
   const [considered, setConsidered] = useState(0);
@@ -84,23 +86,29 @@ export const LeftoverChefScreen = () => {
           <Text style={styles.recipeDesc}>{r.description}</Text>
           <Text style={styles.meta}>~{r.estimated_time_minutes} min</Text>
 
-          <Text style={styles.subhead}>FROM YOUR PANTRY</Text>
-          <Text style={styles.chips}>{r.ingredients_used.join(' · ') || '—'}</Text>
+          <View style={wide ? styles.body2col : undefined}>
+            <View style={wide ? styles.colIngredients : undefined}>
+              <Text style={styles.subhead}>FROM YOUR PANTRY</Text>
+              <Text style={styles.chips}>{r.ingredients_used.join(' · ') || '—'}</Text>
 
-          {r.additional_ingredients.length > 0 ? (
-            <>
-              <Text style={styles.subhead}>YOU'LL ALSO NEED</Text>
-              <Text style={styles.chipsMuted}>{r.additional_ingredients.join(' · ')}</Text>
-            </>
-          ) : null}
-
-          <Text style={styles.subhead}>STEPS</Text>
-          {r.steps.map((step, i) => (
-            <View key={i} style={styles.stepRow}>
-              <Text style={styles.stepNum}>{i + 1}</Text>
-              <Text style={styles.stepText}>{step}</Text>
+              {r.additional_ingredients.length > 0 ? (
+                <>
+                  <Text style={styles.subhead}>YOU'LL ALSO NEED</Text>
+                  <Text style={styles.chipsMuted}>{r.additional_ingredients.join(' · ')}</Text>
+                </>
+              ) : null}
             </View>
-          ))}
+
+            <View style={wide ? styles.colSteps : undefined}>
+              <Text style={styles.subhead}>STEPS</Text>
+              {r.steps.map((step, i) => (
+                <View key={i} style={styles.stepRow}>
+                  <Text style={styles.stepNum}>{i + 1}</Text>
+                  <Text style={styles.stepText}>{step}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
         </Card>
       ))}
 
@@ -141,6 +149,9 @@ const makeStyles = (C: Palette) => StyleSheet.create({
   badgeText: { ...Typography.caption, color: C.warning, letterSpacing: 1 },
   recipeDesc: { ...Typography.bodyMedium, color: C.textSecondary, marginTop: Spacing.xs },
   meta: { ...Typography.labelSmall, color: C.gold, marginTop: Spacing.sm },
+  body2col: { flexDirection: 'row', gap: Spacing.xl, alignItems: 'flex-start' },
+  colIngredients: { flex: 1 },
+  colSteps: { flex: 1.5 },
   subhead: { ...Typography.overline, color: C.textMuted, marginTop: Spacing.md, marginBottom: Spacing.xs },
   chips: { ...Typography.bodyMedium, color: C.textPrimary },
   chipsMuted: { ...Typography.bodyMedium, color: C.textSecondary },

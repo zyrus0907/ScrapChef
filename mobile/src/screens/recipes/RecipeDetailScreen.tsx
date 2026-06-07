@@ -3,15 +3,21 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { RecipeMatch } from '../../api/recipes';
 import { Card } from '../../components/ui/Card';
 import { Radius, Spacing, Typography, useColors, useThemedStyles, type Palette } from '../../theme';
+import { useColumns } from '../../utils/responsive';
 
 export const RecipeDetailScreen = ({ route }: any) => {
   const C = useColors();
   const styles = useThemedStyles(makeStyles);
+  const wide = useColumns() > 1;
   const { match }: { match: RecipeMatch } = route.params;
   const { recipe, match_percentage, coverage } = match;
   const missing_ingredients = coverage.filter((c) => !c.is_matched).map((c) => c.ingredient_name);
   const pct = Math.round(match_percentage * 100);
   const totalTime = recipe.total_time_minutes ?? (recipe.prep_time_minutes + recipe.cook_time_minutes);
+  const steps = (recipe.instructions ?? '')
+    .split(/\r?\n/)
+    .map((s) => s.replace(/^\s*\d+[.)]\s*/, '').trim())
+    .filter(Boolean);
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.scroll}>
@@ -39,37 +45,55 @@ export const RecipeDetailScreen = ({ route }: any) => {
         </View>
       ) : null}
 
-      <Text style={styles.sectionTitle}>Ingredients</Text>
-      <Card style={styles.ingredientsCard}>
-        {recipe.ingredients.map((ing, idx) => {
-          const isMissing = missing_ingredients.includes(ing.name);
-          return (
-            <View
-              key={idx}
-              style={[
-                styles.ingredientRow,
-                idx < recipe.ingredients.length - 1 && styles.ingredientBorder,
-              ]}
-            >
-              <View style={styles.ingLeft}>
+      <View style={wide ? styles.body2col : undefined}>
+        <View style={wide ? styles.colIngredients : undefined}>
+          <Text style={styles.sectionTitle}>Ingredients</Text>
+          <Card style={styles.ingredientsCard}>
+            {recipe.ingredients.map((ing, idx) => {
+              const isMissing = missing_ingredients.includes(ing.name);
+              return (
                 <View
+                  key={idx}
                   style={[
-                    styles.ingDot,
-                    { backgroundColor: isMissing ? C.warning : C.success },
+                    styles.ingredientRow,
+                    idx < recipe.ingredients.length - 1 && styles.ingredientBorder,
                   ]}
-                />
-                <Text style={[styles.ingName, isMissing && styles.ingMissing]}>
-                  {ing.name}
-                  {ing.is_optional ? ' (optional)' : ''}
-                </Text>
-              </View>
-              <Text style={styles.ingQuantity}>
-                {ing.quantity} {ing.unit}
-              </Text>
-            </View>
-          );
-        })}
-      </Card>
+                >
+                  <View style={styles.ingLeft}>
+                    <View
+                      style={[
+                        styles.ingDot,
+                        { backgroundColor: isMissing ? C.warning : C.success },
+                      ]}
+                    />
+                    <Text style={[styles.ingName, isMissing && styles.ingMissing]}>
+                      {ing.name}
+                      {ing.is_optional ? ' (optional)' : ''}
+                    </Text>
+                  </View>
+                  <Text style={styles.ingQuantity}>
+                    {ing.quantity} {ing.unit}
+                  </Text>
+                </View>
+              );
+            })}
+          </Card>
+        </View>
+
+        {steps.length > 0 ? (
+          <View style={wide ? styles.colSteps : undefined}>
+            <Text style={styles.sectionTitle}>Steps</Text>
+            <Card style={styles.ingredientsCard}>
+              {steps.map((step, i) => (
+                <View key={i} style={styles.stepRow}>
+                  <Text style={styles.stepNum}>{i + 1}</Text>
+                  <Text style={styles.stepText}>{step}</Text>
+                </View>
+              ))}
+            </Card>
+          </View>
+        ) : null}
+      </View>
 
       {missing_ingredients.length > 0 ? (
         <View style={styles.missingBox}>
@@ -119,6 +143,12 @@ const makeStyles = (C: Palette) => StyleSheet.create({
   },
   tagText: { ...Typography.caption, color: C.goldLight },
   sectionTitle: { ...Typography.titleMedium, color: C.textPrimary, marginBottom: Spacing.sm },
+  body2col: { flexDirection: 'row', gap: Spacing.xl, alignItems: 'flex-start' },
+  colIngredients: { flex: 1 },
+  colSteps: { flex: 1.3 },
+  stepRow: { flexDirection: 'row', gap: Spacing.sm, paddingVertical: 8 },
+  stepNum: { ...Typography.labelSmall, color: C.gold, width: 18 },
+  stepText: { ...Typography.bodyMedium, color: C.textPrimary, flex: 1, lineHeight: 21 },
   ingredientsCard: { marginBottom: Spacing.lg, gap: 0 },
   ingredientRow: {
     flexDirection: 'row',
